@@ -2,7 +2,6 @@ module PushyResources
   class EventQueue
 
     class << self
-
       def push(event)
         selected_queue.send(event)
       end

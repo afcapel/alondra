@@ -16,7 +16,7 @@ module PushyResources
       @type          = event_hash[:event].to_sym
       @resource      = event_hash[:resource]
       @resource_type = event_hash[:resource_type] || resource.class.name
-      @channel_name  = event_hash[:channel] || get_channel_name
+      @channel_name  = event_hash[:channel] || default_channel_name
     end
 
     def channel
@@ -34,7 +34,7 @@ module PushyResources
 
     private
 
-    def get_channel_name
+    def default_channel_name
       resource_name = @resource.class.name.pluralize.underscore
 
       if type == :updated

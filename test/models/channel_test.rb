@@ -37,7 +37,7 @@ module PushyResources
 
       assert EM.reactor_running?
 
-      sleep(0.2) # Leave event machine to catch up
+      sleep(0.1) # Leave event machine to catch up
 
       last_message = subscription.websocket.messages.last
       assert_equal event.to_json, last_message
