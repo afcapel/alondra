@@ -15,7 +15,7 @@ module PushyResources
       if msg[:command]
         Command.new(websocket, msg).execute!
       elsif msg[:event]
-        Event.new(msg).send_to_channel!
+        EventQueue.push(Event.new(msg))
       end
     end
   end

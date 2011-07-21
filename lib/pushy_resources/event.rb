@@ -20,10 +20,6 @@ module PushyResources
       }.to_json
     end
 
-    def send_to_channel!
-      @channel.receive(self)
-    end
-
     private
 
     def get_channel_name

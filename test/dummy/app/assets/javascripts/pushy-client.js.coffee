@@ -17,6 +17,7 @@ class @PushyClient
       resource     = serverEvent.resource
 
       console.log("Trigering event #{eventName} with resource #{resource}")
+
       # TODO: Do not use jQuery
       $(this).trigger("#{eventName}:#{resourceType}", { resource: resource})
 
