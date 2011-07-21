@@ -17,12 +17,12 @@ module PushyResources
 
     test "subscribe to channel when subscribe command is executed" do
       channel = Channel['test']
-      assert_equal channel.subscribers.size, 0
+      assert_equal channel.subscriptions.size, 0
 
       command = Command.new @websocket, :command => 'subscribe', :channel => 'test'
       command.execute!
 
-      assert_equal 1, channel.subscribers.size
+      assert_equal 1, channel.subscriptions.size
     end
   end
 end

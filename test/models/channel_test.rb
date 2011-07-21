@@ -19,17 +19,17 @@ module PushyResources
     end
 
     test "allow clients to subscribe" do
-      channel   = Channel.new('test subscribers channel')
-      assert_equal 0, channel.subscribers.size
+      channel   = Channel.new('test subscriptions channel')
+      assert_equal 0, channel.subscriptions.size
 
       channel.subscribe @websocket
 
-      assert_equal 1, channel.subscribers.size
+      assert_equal 1, channel.subscriptions.size
     end
 
     test "deliver events to all subscribed clients" do
       channel   = Channel.new('test deliver events channel')
-      subscriber = channel.subscribe @websocket
+      subscription = channel.subscribe @websocket
 
       event = Event.new :event => :created, :resource => Chat.new, :channel => 'test deliver events channel'
 
@@ -39,7 +39,7 @@ module PushyResources
 
       sleep(0.1) # Leave event machine to catch up
 
-      last_message = subscriber.websocket.messages.last
+      last_message = subscription.websocket.messages.last
       assert_equal event.to_json, last_message
     end
 
@@ -47,7 +47,7 @@ module PushyResources
       john = Factory.create :user
       jane = Factory.create :user
 
-      channel = Channel['/subscribers/']
+      channel = Channel['/subscriptions/']
 
       channel.subscribe @websocket, :user_id => john.id
       channel.subscribe @websocket, :user_id => jane.id

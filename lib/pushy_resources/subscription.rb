@@ -1,5 +1,5 @@
 module PushyResources
-  class Subscriber
+  class Subscription
     attr_reader :uid
     attr_reader :channel
     attr_reader :websocket
@@ -26,7 +26,7 @@ module PushyResources
         self.receive(event)
       end
 
-      Subscriber.subscriptions_for(ws) << self
+      Subscription.subscriptions_for(ws) << self
     end
 
     def user
