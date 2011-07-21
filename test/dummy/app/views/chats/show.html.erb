@@ -1,0 +1,41 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Chat name:</b>
+  <%= @chat.name %>
+</p>
+
+<ul id="users">
+  <h3>Present users</h3>
+  <% present_users.each do |user| %>
+    <%= user.username %>
+  <% end %>
+</ul>
+
+<div id="messages">
+  <h3>Messages</h3>
+  <% @chat.messages.each do |msg| %>
+    <div class="message">
+      <%= simple_format msg.text %>
+    </div>
+    <hr/>
+  <% end %>
+</div>
+
+<%= form_for [@chat, @chat.messages.build] do |f| %>
+  <h3>New Message</h3>
+  <%= f.text_area :text, :rows => 5 %>
+
+  <p>
+    <%= f.submit 'send' %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', chats_path %>
+
+<script type="text/javascript">
+  var client = new PushyClient('/messages/');
+  $(client).bind('created:Message', function(event, resource){
+    alert('Received event!');
+  })
+</script>
