@@ -15,10 +15,10 @@ module PushyResources
       chat = Factory.create :chat
       message = chat.messages.create(:text => 'test message')
 
-      sleep(1)
+      sleep(0.1)
 
       last_event = ActiveSupport::JSON.decode(@websocket.messages.last)
-      resource   = ActiveSupport::JSON.decode(last_event['resource'])
+      resource   = last_event['resource']
 
       assert_equal 'created', last_event['event']
       assert_equal 'Message', last_event['resource_type']

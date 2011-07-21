@@ -19,7 +19,7 @@ module PushyResources
       when :subscribe then
         channel.subscribe @websocket, @credentials
       when :unsubscribe then
-        subscriptions = Subscription.subscriptions_for(@websocket)
+        subscriptions = Websockets.subscriptions_for(@websocket)
         subscriptions = subscriptions.select { |s| s.channel == @channel } if @channel
 
         subscriptions.each(&:destroy!)

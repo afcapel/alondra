@@ -21,6 +21,10 @@ gem 'em-websocket'
 gem 'em-synchrony'
 gem 'em-http-request'
 
+# Redis driver
+gem "hiredis", ">= 0.3.1"
+gem "redis", ">= 2.2.1"
+
 gem 'capybara'
 gem 'launchy'
 gem 'factory_girl'

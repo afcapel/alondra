@@ -8,6 +8,9 @@ module PushyResources
 
     def run
       EM.synchrony do
+        puts "Trying to select redis event queue"
+        EventQueue.select_queue
+
         puts "Server started on 0.0.0.0:12345"
 
         EM::WebSocket.start(:host => '0.0.0.0', :port => 12345) do |websocket|
@@ -26,6 +29,11 @@ module PushyResources
             MessageDispatcher.dispatch(msg, websocket)
           end
         end
+      end
+
+      EM.error_handler do |error|
+         puts "Error raised during event loop: #{error.message}"
+         puts error.backtrace
       end
     end
   end

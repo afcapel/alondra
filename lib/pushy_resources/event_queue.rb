@@ -12,7 +12,15 @@ module PushyResources
       end
 
       def select_queue
-        EventQueue.new
+        if RedisEventQueue.can_connect_to_redis?
+          puts "selected redis queue"
+          queue = RedisEventQueue.new
+          queue.start
+          queue
+        else
+          puts "selected in memory queue"
+          EventQueue.new
+        end
       end
     end
 
