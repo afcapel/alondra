@@ -33,6 +33,8 @@
 
 <%= link_to 'Back', chats_path %>
 
+<%= javascript_include_tag 'pushy-client' %>
+
 <script type="text/javascript">
   var client = new PushyClient('/messages/');
   $(client).bind('created:Message', function(event, resource){

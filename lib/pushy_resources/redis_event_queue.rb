@@ -2,10 +2,6 @@ module PushyResources
   class RedisEventQueue
 
     class << self
-      def can_connect_to_redis?
-        # TODO: perform real test
-        true
-      end
 
       def redis
         # We need two redis clients since redis synchronize access to its client
@@ -18,28 +14,29 @@ module PushyResources
         if EM.reactor_thread?
           @reactor_redis_client ||= reactor_redis_client
         else
-          @app_redis_client     ||=  app_redis_client
+          @app_redis_client     ||= app_redis_client
         end
       end
 
       def reactor_redis_client
+        # Redis will use the last driver in Redis::Connection.drivers
         # Force redis to use synchrony driver
         Thread.exclusive do
           require 'redis/connection/synchrony'
           Redis::Connection.drivers << Redis::Connection::Synchrony
-          @reactor_redis_client = Redis.new
+          Redis.new
         end
       end
 
       def app_redis_client
+        # Redis will use the last driver in Redis::Connection.drivers
         # Force redis to use ruby driver
         Thread.exclusive do
           require 'redis/connection/ruby'
           Redis::Connection.drivers << Redis::Connection::Ruby
-          @app_redis_client = Redis.new
+          Redis.new
         end
       end
-
 
       def redis_channel
         'PushyEvents'

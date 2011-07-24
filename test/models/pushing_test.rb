@@ -17,6 +17,8 @@ module PushyResources
 
       sleep(0.1)
 
+      assert @websocket.messages.last, "should publish a message"
+
       last_event = ActiveSupport::JSON.decode(@websocket.messages.last)
       resource   = last_event['resource']
 

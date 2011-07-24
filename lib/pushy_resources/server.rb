@@ -8,16 +8,26 @@ module PushyResources
 
     def run
       EM.synchrony do
-        puts "Trying to select redis event queue"
         EventQueue.select_queue
 
         puts "Server started on 0.0.0.0:12345"
 
         EM::WebSocket.start(:host => '0.0.0.0', :port => 12345) do |websocket|
 
-          websocket.onopen { puts "Client connected" }
+          websocket.onopen do
+            puts "client connected"
 
-          websocket.onclose { puts "closed" }
+            cookie = websocket.request['cookie']
+            session_string = CGI.unescape(cookie.split('=').last)
+            verifier = ActiveSupport::MessageVerifier.new(Dummy::Application.config.secret_token)
+
+            puts "session:"
+            puts verifier.verify(session_string)
+          end
+
+          websocket.onclose do |ws|
+            puts "connection closed"
+          end
 
           websocket.onerror do |ex|
             puts "Error: #{ex.message}"
@@ -32,8 +42,8 @@ module PushyResources
       end
 
       EM.error_handler do |error|
-         puts "Error raised during event loop: #{error.message}"
-         puts error.backtrace
+        puts "Error raised during event loop: #{error.message}"
+        puts error.backtrace
       end
     end
   end

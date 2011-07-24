@@ -6,5 +6,4 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require pushy-client
 //= require_tree .
