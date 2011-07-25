@@ -7,15 +7,17 @@ module PushyResources
       end
 
       def selected_queue
-        @selected_queue ||= select_queue
+        @selected_queue ||= select
       end
 
-      def select_queue
+      def select
         if PushyResources.config.event_queue == :redis
+          puts "selected Redis event queue"
           queue = RedisEventQueue.new
           queue.start
           queue
         else
+          puts "selected in memory event queue"
           EventQueue.new
         end
       end

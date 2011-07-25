@@ -2,13 +2,13 @@ require 'test_helper'
 
 module PushyResources
 
-  class ChannelTest < ActiveSupport::TestCase
+  class PushingTest < ActiveSupport::TestCase
 
     def setup
-      @websocket  = MockWebsocket.new
+      @connection = MockConnection.new
       @channel    = Channel['/messages/']
 
-      @channel.subscribe @websocket
+      @channel.subscribe @connection
     end
 
     test "publish created events" do
@@ -17,9 +17,9 @@ module PushyResources
 
       sleep(0.1)
 
-      assert @websocket.messages.last, "should publish a message"
+      assert @connection.messages.last, "should publish a message"
 
-      last_event = ActiveSupport::JSON.decode(@websocket.messages.last)
+      last_event = ActiveSupport::JSON.decode(@connection.messages.last)
       resource   = last_event['resource']
 
       assert_equal 'created', last_event['event']

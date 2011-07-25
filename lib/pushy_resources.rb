@@ -10,6 +10,8 @@ module PushyResources
      config.redis_port          = 6379
 
      initializer "initializing pushy resources server" do
+       puts "Extending active record"
+
         ActiveRecord::Base.extend Pushing
 
         if EM.reactor_running?

@@ -85,7 +85,6 @@ GEM
     mime-types (1.16)
     multi_json (1.0.3)
     mysql2 (0.3.6)
-    nifty-generators (0.4.6)
     nokogiri (1.5.0)
     polyglot (0.3.1)
     rack (1.3.1)
@@ -139,6 +138,7 @@ GEM
     uglifier (1.0.0)
       execjs (>= 0.3.0)
       multi_json (>= 1.0.2)
+    uuidtools (2.1.2)
     xpath (0.1.4)
       nokogiri (~> 1.3)
 
@@ -158,8 +158,8 @@ DEPENDENCIES
   json
   launchy
   mysql2
-  nifty-generators
   rails (= 3.1.0.rc4)
   redis (>= 2.2.1)
   sass-rails
   uglifier
+  uuidtools

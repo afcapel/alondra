@@ -5,7 +5,7 @@ module PushyResources
   class ChannelTest < ActiveSupport::TestCase
 
     def setup
-      @websocket = MockWebsocket.new
+      @connection = MockConnection.new
     end
 
     test "it has a name" do
@@ -20,16 +20,16 @@ module PushyResources
 
     test "allow clients to subscribe" do
       channel   = Channel.new('test subscriptions channel')
-      assert_equal 0, channel.subscriptions.size
+      assert_equal 0, channel.connections.size
 
-      channel.subscribe @websocket
+      channel.subscribe @connection
 
-      assert_equal 1, channel.subscriptions.size
+      assert_equal 1, channel.connections.size
     end
 
-    test "deliver events to all subscribed clients" do
+    test "deliver events to all subscribed connections" do
       channel   = Channel.new('test deliver events channel')
-      subscription = channel.subscribe @websocket
+      channel.subscribe @connection
 
       event = Event.new :event => :created, :resource => Chat.new, :channel => 'test deliver events channel'
 
@@ -39,7 +39,7 @@ module PushyResources
 
       sleep(0.1) # Leave event machine to catch up
 
-      last_message = subscription.websocket.messages.last
+      last_message = @connection.messages.last
       assert_equal event.to_json, last_message
     end
 
@@ -47,11 +47,19 @@ module PushyResources
       john = Factory.create :user
       jane = Factory.create :user
 
+      john_connection = MockConnection.new(:id => john.id)
+      jane_connection = MockConnection.new(:id => jane.id)
+      another_jane_connection = MockConnection.new(:id => jane.id)
+
+      assert_equal john, john_connection.user
+      assert_equal jane, jane_connection.user
+
       channel = Channel['/subscriptions/']
 
-      channel.subscribe @websocket, :user_id => john.id
-      channel.subscribe @websocket, :user_id => jane.id
-      channel.subscribe @websocket, :user_id => john.id
+      channel.subscribe @connection
+      channel.subscribe john_connection
+      channel.subscribe jane_connection
+      channel.subscribe another_jane_connection
 
       assert_equal 2, channel.users.size
 

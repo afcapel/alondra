@@ -9,9 +9,6 @@ gem 'sass-rails'
 gem 'coffee-script'
 gem 'uglifier'
 
-gem "nifty-generators", :group => :development
-
-
 # Rails 3.1 - JavaScript
 gem 'jquery-rails'
 
@@ -25,14 +22,9 @@ gem 'em-http-request'
 gem "hiredis", ">= 0.3.1"
 gem "redis", ">= 2.2.1"
 
+gem 'uuidtools'
+
 gem 'capybara'
 gem 'launchy'
 gem 'factory_girl'
 
-# Bundle edge Rails instead:
-# gem 'rails',     :git => 'git://github.com/rails/rails.git'
-
-
-if RUBY_VERSION < '1.9'
-  gem "ruby-debug", ">= 0.10.3"
-end

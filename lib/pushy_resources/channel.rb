@@ -2,7 +2,7 @@ module PushyResources
   class Channel
     attr_reader :name
     attr_reader :em_channel
-    attr_reader :subscriptions
+    attr_reader :connections
 
     class << self
       def list
@@ -17,26 +17,31 @@ module PushyResources
     def initialize(name)
       @name = name
       @em_channel = EM::Channel.new
-      @subscriptions = []
+      @connections = {}
     end
 
-    def subscribe(websocket, credentials = nil)
-      subscription = Subscription.new(self, websocket, credentials)
+    def subscribe(connection)
+      sid = em_channel.subscribe do |event|
+        connection.receive(event)
+      end
 
-      @subscriptions << subscription
-      subscription
+      connection.channels << self
+      connections[connection] = sid
     end
 
-    def unsubscribe(subscription)
-      @subscriptions.delete(subscription)
+    def unsubscribe(connection)
+      em_channel.unsubscribe connections[connection]
+
+      connections.channels.delete self
+      connections.delete connection
     end
 
     def receive(event)
-      @em_channel << event
+      em_channel << event
     end
 
     def users
-      @subscriptions.collect(&:user).compact.uniq
+      connections.keys.collect(&:user).compact.uniq
     end
   end
 end

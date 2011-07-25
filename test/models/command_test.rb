@@ -5,7 +5,7 @@ module PushyResources
   class CommandTest < ActiveSupport::TestCase
 
     def setup
-      @websocket = MockWebsocket.new
+      @connection = MockConnection.new
     end
 
     test "it is created with a hash" do
@@ -17,12 +17,12 @@ module PushyResources
 
     test "subscribe to channel when subscribe command is executed" do
       channel = Channel['test']
-      assert_equal channel.subscriptions.size, 0
+      assert_equal 0, channel.connections.size
 
-      command = Command.new @websocket, :command => 'subscribe', :channel => 'test'
+      command = Command.new @connection, :command => 'subscribe', :channel => 'test'
       command.execute!
 
-      assert_equal 1, channel.subscriptions.size
+      assert_equal 1, channel.connections.size
     end
   end
 end

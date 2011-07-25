@@ -2,12 +2,11 @@ module PushyResources
   class Command
     attr_reader :name
 
-    def initialize(websocket, command_hash)
-      @websocket = websocket
+    def initialize(connection, command_hash)
+      @connection = connection
 
       @name         = command_hash[:command].to_sym
       @channel_name = command_hash[:channel]
-      @credentials  = command_hash[:credentials]
     end
 
     def channel
@@ -17,12 +16,9 @@ module PushyResources
     def execute!
       case name
       when :subscribe then
-        channel.subscribe @websocket, @credentials
+        channel.subscribe @connection
       when :unsubscribe then
-        subscriptions = Websockets.subscriptions_for(@websocket)
-        subscriptions = subscriptions.select { |s| s.channel == @channel } if @channel
-
-        subscriptions.each(&:destroy!)
+        channel.unsubscribe @connection
       end
     end
   end

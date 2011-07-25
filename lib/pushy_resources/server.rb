@@ -8,9 +8,9 @@ module PushyResources
 
     def run
       EM.synchrony do
-        EventQueue.select_queue
 
-        puts "Server started on 0.0.0.0:12345"
+        puts "Server starting on 0.0.0.0:12345"
+        EventQueue.select
 
         EM::WebSocket.start(:host => '0.0.0.0', :port => 12345) do |websocket|
 

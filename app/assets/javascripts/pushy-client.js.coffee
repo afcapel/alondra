@@ -5,6 +5,7 @@ class @PushyClient
     @socket = new WebSocket "ws://localhost:12345"
 
     @socket.onopen = () =>
+      alert("opened connection")
       if channels instanceof Array
         @subscribe channel for channel in channels
       else
