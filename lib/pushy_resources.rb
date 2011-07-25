@@ -10,14 +10,14 @@ module PushyResources
      config.redis_port          = 6379
 
      initializer "initializing pushy resources server" do
-        ActiveRecord::Base.extend PushyResources::Pushing
+        ActiveRecord::Base.extend Pushing
 
         if EM.reactor_running?
           PushyResources::Server.run
         else
           Thread.new do
             puts "Running EM reactor in new thread"
-            EM.run { PushyResources::Server.run }
+            EM.run { Server.run }
           end
         end
 
