@@ -13,6 +13,10 @@ module PushyResources
       messages << event.to_json
     end
 
+    def channels
+      @channels ||= []
+    end
+
     def messages
       @messages ||= []
     end

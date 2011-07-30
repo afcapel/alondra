@@ -38,7 +38,7 @@ module PushyResources
     end
 
     def user
-      @user ||= User.where(@credentials).first
+      User.where(@credentials).first
     end
 
     def receive(event)

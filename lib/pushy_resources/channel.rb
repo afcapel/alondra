@@ -32,7 +32,7 @@ module PushyResources
     def unsubscribe(connection)
       em_channel.unsubscribe connections[connection]
 
-      connections.channels.delete self
+      connection.channels.delete self
       connections.delete connection
     end
 

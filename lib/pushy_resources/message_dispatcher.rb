@@ -3,8 +3,7 @@ module PushyResources
     extend self
 
     def parse(string)
-      msg = ActiveSupport::JSON.decode(string)
-      msg.inject({}){|memo,(k,v)| memo[k.to_sym] = v; memo}
+      msg = ActiveSupport::JSON.decode(string).symbolize_keys
     end
 
     def dispatch(input, websocket)

@@ -39,6 +39,10 @@ module PushyResources
       @channel ||= Channel[channel_name]
     end
 
+    def fire!
+      EventQueue.push self
+    end
+
     def to_json
       ActiveSupport::JSON.encode({
         :event         => type,
