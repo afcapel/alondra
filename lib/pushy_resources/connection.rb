@@ -11,8 +11,8 @@ module PushyResources
       connections[uid]
     end
 
-    def []=(uid, info)
-      connections[uid] = info
+    def []=(uid, connection)
+      connections[uid] = connection
     end
 
     def delete(uid)
@@ -46,14 +46,8 @@ module PushyResources
     end
 
     def destroy
-      Connections.delete uid
-    end
-
-    def as_json
-      {
-        :uuid        => uuid,
-        :credentials => credentials
-      }
+      channels.each { |c| c.unsubscribe self }
+      Connections.delete uuid
     end
   end
 end

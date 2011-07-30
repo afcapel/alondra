@@ -6,10 +6,26 @@ module PushyResources
     attr_reader :resource_type
 
     def self.from_json(s)
-      event_hash = ActiveSupport::JSON.decode(s)
+      event_hash = ActiveSupport::JSON.decode(s).symbolize_keys
       event_hash = event_hash.inject({}){|memo,(k,v)| memo[k.to_sym] = v; memo}
 
+      event_hash[:resource] = fetch_resource(event_hash[:resource_type], event_hash[:resource])
       Event.new(event_hash)
+    end
+
+
+    def self.fetch_resource(resource_type, attributes)
+      resource_class = Kernel.const_get(resource_type)
+
+      if resource_class == NilClass
+        attributes
+      else
+        resource = resource_class.new
+        attributes.each do |key, value|
+          resource.send("#{key}=", value)
+        end
+        resource
+      end
     end
 
     def initialize(event_hash)

@@ -8,7 +8,7 @@ module PushyResources
         # Otherwise reactor and application threads will end in a deadlock
 
         # Furthermore we can't use a blocking driver inside EventMachine
-        # and a non-blocking driver in a regular rails applicartion, so we must
+        # and a non-blocking driver in a regular rails application, so we must
         # choose the right driver in each case
 
         if EM.reactor_thread?

@@ -67,5 +67,25 @@ module PushyResources
       assert channel.users.include? jane
     end
 
+    test "observers can subscribe to a channel" do
+      channel  = Channel.new('observed channel')
+      observer = MockObserver.new('observed channel')
+
+      chat = Chat.create :name => 'Chat to subscribe'
+
+      channel.register observer
+      assert_equal observer, channel.observers.last
+
+      event = Event.new :event => :created, :resource => chat, :channel => 'observed channel'
+
+      channel.receive event
+
+      assert_equal 1, observer.received_events.size
+      assert_equal event, observer.received_events.first
+
+      channel.unregister observer
+      assert_empty channel.observers
+    end
+
   end
 end

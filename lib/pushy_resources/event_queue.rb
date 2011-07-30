@@ -3,11 +3,11 @@ module PushyResources
 
     class << self
       def push(event)
-        selected_queue.send(event)
+        selected.send(event)
       end
 
-      def selected_queue
-        @selected_queue ||= select
+      def selected
+        @selected ||= select
       end
 
       def select
@@ -25,6 +25,7 @@ module PushyResources
 
     def send(event)
       event.channel.receive(event)
+      observers_for(event.channel_name).each { |ob| ob.receive(event) }
     end
   end
 end
