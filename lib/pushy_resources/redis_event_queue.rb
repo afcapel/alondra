@@ -49,7 +49,7 @@ module PushyResources
       RedisEventQueue.redis.psubscribe RedisEventQueue.redis_channel do |subscription|
         subscription.pmessage do |pattern, event, message|
           event = Event.from_json(message)
-          process(event)
+          EventRouter.process(event)
         end
       end
     end
@@ -57,10 +57,6 @@ module PushyResources
     def send(event)
       serialized_event = event.to_json
       RedisEventQueue.redis.publish RedisEventQueue.redis_channel, serialized_event
-    end
-
-    def process(event)
-      event.channel.receive(event)
     end
   end
 end

@@ -38,19 +38,6 @@ module PushyResources
 
     def receive(event)
       em_channel << event
-      observers.each { |ob| ob.receive event }
-    end
-
-    def observers
-      @observers ||= []
-    end
-
-    def register(observer)
-      observers << observer
-    end
-
-    def unregister(observer)
-      observers.delete(observer)
     end
 
     def users

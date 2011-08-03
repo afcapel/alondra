@@ -1,3 +1,4 @@
+require 'singleton'
 Dir[File.dirname(__FILE__) + '/pushy_resources/*.rb'].each {|file| require file }
 
 module PushyResources
