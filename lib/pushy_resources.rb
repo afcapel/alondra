@@ -15,6 +15,8 @@ module PushyResources
 
         ActiveRecord::Base.extend Pushing
 
+        puts "Initializing server"
+
         if EM.reactor_running?
           PushyResources::Server.run
         else

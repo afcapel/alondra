@@ -25,6 +25,7 @@ module PushyResources
       channel.subscribe @connection
 
       assert_equal 1, channel.connections.size
+      assert channel.connections.keys.include? @connection
     end
 
     test "deliver events to all subscribed connections" do

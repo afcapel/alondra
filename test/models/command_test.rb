@@ -8,8 +8,8 @@ module PushyResources
       @connection = MockConnection.new
     end
 
-    test "it is created with a hash" do
-      command = Command.new @websocket, :command => 'subscribe', :channel => 'test'
+    test "it is created with a connection and a hash" do
+      command = Command.new @connection, :command => 'subscribe', :channel => 'test'
 
       assert_equal :subscribe, command.name
       assert_equal 'test', command.channel.name
@@ -23,6 +23,7 @@ module PushyResources
       command.execute!
 
       assert_equal 1, channel.connections.size
+      assert channel.connections.keys.include? @connection
     end
   end
 end

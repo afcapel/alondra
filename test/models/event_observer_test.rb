@@ -12,6 +12,10 @@ module PushyResources
       @subscribed_clients ||= []
     end
 
+    def self.custom_events
+      @custom_events ||= []
+    end
+
     on :created do |event|
       ChatObserver.created_chats << event.resource
     end
@@ -27,6 +31,10 @@ module PushyResources
 
     on :unsubscribed do |event|
       ChatObserver.subscribed_clients.delete(event.resource)
+    end
+
+    on :custom do |event|
+      ChatObserver.custom_events << event
     end
 
   end
@@ -110,6 +118,10 @@ module PushyResources
     end
 
     test 'receive customs events' do
+      event = Event.new :event => :custom, :resource => Chat.new, :channel => '/chats/'
+      EventRouter.process(event)
+
+      assert_equal ChatObserver.custom_events.last, event
     end
 
   end
