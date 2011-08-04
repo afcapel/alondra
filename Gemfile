@@ -1,6 +1,6 @@
 source "http://rubygems.org"
 
-gem 'rails', '3.1.0.rc4'
+gem 'rails', '3.1.0.rc5'
 gem "mysql2"
 
 # Rails 3.1 - Asset Pipeline

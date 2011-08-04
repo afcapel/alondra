@@ -24,16 +24,12 @@ module PushyResources
         end
       end
 
-      def on(event_type, &block)
-        self.callbacks_for(event_type) << block
+      def on(event_type, options = {}, &block)
+        callbacks << ObserverCallback.new(event_type, options, block)
       end
 
       def callbacks
-        @callbacks ||= {}
-      end
-
-      def callbacks_for(event_type)
-        callbacks[event_type] ||= []
+        @callbacks ||= []
       end
 
       def default_observed_pattern
@@ -53,8 +49,9 @@ module PushyResources
 
 
     def receive(event)
-      self.class.callbacks_for(event.type).each do |block|
-        self.instance_exec(event, &block)
+      matching_callbacks = self.class.callbacks.find_all { |c| c.matches?(event) }
+      matching_callbacks.each do |callback|
+        self.instance_exec(event, &callback.proc)
       end
     end
   end
