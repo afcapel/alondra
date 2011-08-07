@@ -25,6 +25,7 @@ gem "redis", ">= 2.2.1"
 gem 'uuidtools'
 
 gem 'capybara'
+gem 'capybara-webkit'
 gem 'launchy'
 gem 'factory_girl'
 

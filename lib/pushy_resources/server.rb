@@ -9,41 +9,43 @@ module PushyResources
     def run
       EM.synchrony do
 
-        puts "Server starting on 0.0.0.0:12345"
+        Rails.logger.error "Server starting on 0.0.0.0:12345"
+
         EventQueue.select
 
         EM::WebSocket.start(:host => '0.0.0.0', :port => 12345) do |websocket|
 
+          Rails.logger.info "Server started on 0.0.0.0:12345"
+
           websocket.onopen do
-            puts "client connected"
+            puts "websocket request:"
+            puts websocket.request.to_json
 
-            cookie = websocket.request['cookie']
-            session_string = CGI.unescape(cookie.split('=').last)
-            verifier = ActiveSupport::MessageVerifier.new(Dummy::Application.config.secret_token)
+            credentials = CredentialsParser.parse(websocket.request['cookie'])
+            Rails.logger.info "client connected. credentials: #{credentials}"
 
-            puts "session:"
-            puts verifier.verify(session_string)
+            Connection.new(websocket, credentials)
           end
 
           websocket.onclose do |ws|
-            puts "connection closed"
+            Rails.logger.info "connection closed"
           end
 
           websocket.onerror do |ex|
-            puts "Error: #{ex.message}"
-            puts ex.backtrace
+            Rails.logger.error "Error: #{ex.message}"
+            Rails.logger.error ex.backtrace.join("\n")
           end
 
           websocket.onmessage do |msg|
-            puts "received: #{msg}"
-            MessageDispatcher.dispatch(msg, websocket)
+            Rails.logger.info "received: #{msg}"
+            MessageDispatcher.dispatch(msg, Connections[websocket])
           end
         end
       end
 
       EM.error_handler do |error|
-        puts "Error raised during event loop: #{error.message}"
-        puts error.backtrace
+        Rails.logger.error "Error raised during event loop: #{error.message}"
+        Rails.logger.error error.backtrace.join("\n")
       end
     end
   end

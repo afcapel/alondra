@@ -12,20 +12,19 @@ module PushyResources
 
       def select
         if PushyResources.config.event_queue == :redis
-          puts "selected Redis event queue"
+          Rails.logger.info "selected Redis event queue"
           queue = RedisEventQueue.new
           queue.start
           queue
         else
-          puts "selected in memory event queue"
+          Rails.logger.info "selected in memory event queue"
           EventQueue.new
         end
       end
     end
 
     def send(event)
-      event.channel.receive(event)
-      observers_for(event.channel_name).each { |ob| ob.receive(event) }
+      EventRouter.process(event)
     end
   end
 end

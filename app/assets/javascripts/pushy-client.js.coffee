@@ -1,15 +1,23 @@
 #= require "vendor/json2"
+#= require "vendor/swfobject"
+#= require "vendor/web_socket"
+//= provide "../swf"
+
+window.WEB_SOCKET_SWF_LOCATION = "/assets/WebSocketMain.swf"
 
 class @PushyClient
   constructor: (channels) ->
     @socket = new WebSocket "ws://localhost:12345"
 
     @socket.onopen = () =>
-      alert("opened connection")
+      console.log("opened connection")
       if channels instanceof Array
         @subscribe channel for channel in channels
       else
         @subscribe channels
+
+    @socket.onclose = () =>
+      console.log("connection closed")
 
     @socket.onmessage = (message) =>
       serverEvent  = JSON.parse(message.data)
@@ -17,11 +25,13 @@ class @PushyClient
       resourceType = serverEvent.resource_type
       resource     = serverEvent.resource
 
-      console.log("Trigering event #{eventName} with resource #{resource}")
+      console.log("Trigering event #{eventName} with resource #{resourceType} #{resource.id}")
 
-      # TODO: Do not use jQuery
-      $(this).trigger("#{eventName}:#{resourceType}", { resource: resource})
+      $(this).trigger("#{eventName}", resource)
 
+
+    @socket.onerror = (error) =>
+      console.log("Error #{error}")
 
   subscribe: (channel, credentials) ->
     console.log "subscribing to #{channel}"

@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.version = "0.0.1"
 
   # Dependencies
-  s.add_dependency('eventmachine', '>= 1.0.0.beta')
+  s.add_dependency('eventmachine', '>= 1.0.0.beta.4')
   s.add_dependency('em-websocket')
   s.add_dependency('em-synchrony')
   s.add_dependency('em-http-request')

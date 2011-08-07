@@ -48,9 +48,9 @@ module PushyResources
       john = Factory.create :user
       jane = Factory.create :user
 
-      john_connection = MockConnection.new(:id => john.id)
-      jane_connection = MockConnection.new(:id => jane.id)
-      another_jane_connection = MockConnection.new(:id => jane.id)
+      john_connection = MockConnection.new(:user_id => john.id)
+      jane_connection = MockConnection.new(:user_id => jane.id)
+      another_jane_connection = MockConnection.new(:user_id => jane.id)
 
       assert_equal john, john_connection.user
       assert_equal jane, jane_connection.user

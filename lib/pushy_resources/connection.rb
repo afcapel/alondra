@@ -7,16 +7,16 @@ module PushyResources
       @connections ||= {}
     end
 
-    def [](uid)
-      connections[uid]
+    def [](websocket)
+      connections[websocket]
     end
 
-    def []=(uid, connection)
-      connections[uid] = connection
+    def []=(websocket, connection)
+      connections[websocket] = connection
     end
 
-    def delete(uid)
-      connections.delete uid
+    def delete(websocket)
+      connections.delete websocket
     end
   end
 
@@ -27,10 +27,12 @@ module PushyResources
     attr_reader :channels
 
     def initialize(websocket, credentials)
-      @credentials = credentials
-      @uuid        = UUIDTools::UUID.random_create.to_s
+      credentials ||= {}
+      @credentials = credentials.stringify_keys
+      @websocket   = websocket
+      @uuid = UUIDTools::UUID.random_create
 
-      Connections[uuid] = self
+      Connections[websocket || uuid] = self
     end
 
     def channels
@@ -38,10 +40,11 @@ module PushyResources
     end
 
     def user
-      User.where(@credentials).first
+      User.where(credentials_to_param).first if credentials_to_param
     end
 
     def receive(event)
+      puts "sending event #{event.to_json}"
       websocket.send event.to_json
     end
 
@@ -49,5 +52,20 @@ module PushyResources
       channels.each { |c| c.unsubscribe self }
       Connections.delete uuid
     end
+
+    private
+
+    def credentials_to_param
+      return {:id => warden_user_id }        if warden_user_id
+      return {:id => credentials['user_id']} if credentials['user_id']
+      return {:id => credentials['id']}      if credentials['id']
+
+      nil
+    end
+
+    def warden_user_id
+      credentials['warden.user.user.key'] && credentials['warden.user.user.key'][1].first
+    end
+
   end
 end

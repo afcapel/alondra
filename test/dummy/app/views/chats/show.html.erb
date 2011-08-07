@@ -36,8 +36,8 @@
 <%= javascript_include_tag 'pushy-client' %>
 
 <script type="text/javascript">
-  var client = new PushyClient('/messages/');
-  $(client).bind('created:Message', function(event, resource){
-    alert('Received event!');
+  var client = new PushyClient('<%= chat_path(@path) %>');
+  $(client).bind('subscribed', function(event, resource){
+    console.log('Received subscribed event!');
   })
 </script>

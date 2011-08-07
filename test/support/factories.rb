@@ -14,6 +14,6 @@ end
 Factory.define :user do |f|
   f.username { Factory.next(:username) }
   f.email    { |u| "#{u.username}@example.com" }
-  f.password '1234'
-  f.password_confirmation '1234'
+  f.password 'secret'
+  f.password_confirmation 'secret'
 end

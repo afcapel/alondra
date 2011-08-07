@@ -6,13 +6,14 @@ module PushyResources
       msg = ActiveSupport::JSON.decode(string).symbolize_keys
     end
 
-    def dispatch(input, websocket)
+    def dispatch(input, connection)
       msg = parse(input)
 
       raise 'Unrecognized message' unless msg.kind_of?(Hash)
 
       if msg[:command]
-        Command.new(websocket, msg).execute!
+        puts "New command created"
+        Command.new(connection, msg).execute!
       elsif msg[:event]
         EventQueue.push(Event.new(msg))
       end

@@ -1,0 +1,2 @@
+module PushyHelper
+end

@@ -12,8 +12,10 @@ module PushyResources
         # choose the right driver in each case
 
         if EM.reactor_thread?
+          Rails.logger.info "reactor redis client selected"
           @reactor_redis_client ||= reactor_redis_client
         else
+          Rails.logger.info "synchronous redis client selected"
           @app_redis_client     ||= app_redis_client
         end
       end
@@ -44,19 +46,33 @@ module PushyResources
     end
 
     def start
-      return unless EM.reactor_thread?
+      unless EM.reactor_thread?
+        Rails.logger.error "Trying to run redis event queue outside EM reactor"
+        return
+      end
 
-      RedisEventQueue.redis.psubscribe RedisEventQueue.redis_channel do |subscription|
+
+      RedisEventQueue.redis.psubscribe channel do |subscription|
         subscription.pmessage do |pattern, event, message|
+          puts "recovered from redis queue #{message}"
           event = Event.from_json(message)
           EventRouter.process(event)
         end
       end
+
+      Rails.logger.info "Event queue started"
     end
 
     def send(event)
       serialized_event = event.to_json
-      RedisEventQueue.redis.publish RedisEventQueue.redis_channel, serialized_event
+      puts "Sending to redis Queue #{serialized_event}"
+      RedisEventQueue.redis.publish channel, serialized_event
+    end
+
+    private
+
+    def channel
+      RedisEventQueue.redis_channel
     end
   end
 end

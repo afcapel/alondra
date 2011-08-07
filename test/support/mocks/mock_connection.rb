@@ -1,7 +1,7 @@
 module PushyResources
   class MockConnection < Connection
 
-    def initialize(credentials = nil)
+    def initialize(credentials = {})
       super nil, credentials
     end
 

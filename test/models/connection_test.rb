@@ -10,7 +10,7 @@ module PushyResources
 
     test "can find user if credentials are provided" do
       user = Factory.create :user
-      connection = MockConnection.new(:id => user.id)
+      connection = MockConnection.new(:user_id => user.id)
 
       assert_equal user, connection.user
     end
