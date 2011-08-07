@@ -6,8 +6,8 @@
 window.WEB_SOCKET_SWF_LOCATION = "/assets/WebSocketMain.swf"
 
 class @PushyClient
-  constructor: (channels) ->
-    @socket = new WebSocket "ws://localhost:12345"
+  constructor: (channels, token) ->
+    @socket = new WebSocket "ws://localhost:12345?token=#{token}"
 
     @socket.onopen = () =>
       console.log("opened connection")

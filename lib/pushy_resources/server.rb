@@ -18,10 +18,11 @@ module PushyResources
           Rails.logger.info "Server started on 0.0.0.0:12345"
 
           websocket.onopen do
-            puts "websocket request:"
-            puts websocket.request.to_json
+            token = websocket.request['query']['token']
+            puts "token:"
+            puts token
 
-            credentials = CredentialsParser.parse(websocket.request['cookie'])
+            credentials = CredentialsParser.parse(token)
             Rails.logger.info "client connected. credentials: #{credentials}"
 
             Connection.new(websocket, credentials)

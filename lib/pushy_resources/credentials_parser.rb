@@ -6,13 +6,11 @@ module PushyResources
       @verifier ||= ActiveSupport::MessageVerifier.new(Rails.application.config.secret_token)
     end
 
-    def parse(cookie)
-      puts "parsing cookie: #{cookie}"
+    def parse(token)
       credentials = {}
-
       begin
-        session_string = CGI.unescape(cookie.split('=').last)
-        credentials = verifier.verify(session_string)
+        decoded_token = verifier.verify(token)
+        credentials   = ActiveSupport::JSON.decode(decoded_token)
       rescue ActiveSupport::MessageVerifier::InvalidSignature => ex
         Rails.logger.error "invalid session cookie: #{cookie}"
       end
