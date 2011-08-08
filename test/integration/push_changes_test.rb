@@ -38,6 +38,12 @@ module PushyResources
       wait_until(10) do
         page.has_content? 'A chat about everything'
       end
+
+      visit chats_path
+
+      wait_until(10) do
+        !Channel[chat_path].users.include?(user)
+      end
     end
   end
 end

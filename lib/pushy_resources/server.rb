@@ -26,13 +26,14 @@ module PushyResources
             Connection.new(websocket, credentials)
           end
 
-          websocket.onclose do |ws|
-            Rails.logger.info "connection closed"
+          websocket.onclose do
+            Connections[websocket].destroy!
           end
 
           websocket.onerror do |ex|
             Rails.logger.error "Error: #{ex.message}"
             Rails.logger.error ex.backtrace.join("\n")
+            Connections[websocket].destroy!
           end
 
           websocket.onmessage do |msg|

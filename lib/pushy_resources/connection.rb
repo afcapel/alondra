@@ -32,7 +32,7 @@ module PushyResources
       @websocket   = websocket
       @uuid = UUIDTools::UUID.random_create
 
-      Connections[websocket || uuid] = self
+      Connections[websocket] = self
     end
 
     def channels
@@ -47,9 +47,9 @@ module PushyResources
       websocket.send event.to_json
     end
 
-    def destroy
+    def destroy!
       channels.each { |c| c.unsubscribe self }
-      Connections.delete uuid
+      Connections.delete self.websocket
     end
 
     private

@@ -12,7 +12,7 @@ module PushyResources
         decoded_token = verifier.verify(token)
         credentials   = ActiveSupport::JSON.decode(decoded_token)
       rescue ActiveSupport::MessageVerifier::InvalidSignature => ex
-        Rails.logger.error "invalid session cookie: #{cookie}"
+        Rails.logger.error "invalid session token: #{token}"
       end
 
       credentials

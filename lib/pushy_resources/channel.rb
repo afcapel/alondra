@@ -34,6 +34,12 @@ module PushyResources
 
       connection.channels.delete self
       connections.delete connection
+
+      event = Event.new :event    => :unsubscribed,
+                        :resource => connection.user || connection.credentials,
+                        :channel  => name
+
+      event.fire!
     end
 
     def receive(event)
