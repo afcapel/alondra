@@ -12,7 +12,6 @@ module PushyResources
       raise 'Unrecognized message' unless msg.kind_of?(Hash)
 
       if msg[:command]
-        puts "New command created"
         Command.new(connection, msg).execute!
       elsif msg[:event]
         EventQueue.push(Event.new(msg))

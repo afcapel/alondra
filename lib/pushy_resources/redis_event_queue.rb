@@ -54,7 +54,6 @@ module PushyResources
 
       RedisEventQueue.redis.psubscribe channel do |subscription|
         subscription.pmessage do |pattern, event, message|
-          puts "recovered from redis queue #{message}"
           event = Event.from_json(message)
           EventRouter.process(event)
         end
@@ -65,7 +64,6 @@ module PushyResources
 
     def send(event)
       serialized_event = event.to_json
-      puts "Sending to redis Queue #{serialized_event}"
       RedisEventQueue.redis.publish channel, serialized_event
     end
 

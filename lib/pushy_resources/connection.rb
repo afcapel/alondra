@@ -44,7 +44,6 @@ module PushyResources
     end
 
     def receive(event)
-      puts "sending event #{event.to_json}"
       websocket.send event.to_json
     end
 

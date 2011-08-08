@@ -19,8 +19,6 @@ module PushyResources
 
           websocket.onopen do
             token = websocket.request['query']['token']
-            puts "token:"
-            puts token
 
             credentials = CredentialsParser.parse(token)
             Rails.logger.info "client connected. credentials: #{credentials}"

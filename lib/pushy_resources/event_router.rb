@@ -7,7 +7,6 @@ module PushyResources
     end
 
     def self.process(event)
-      puts "processing event #{event.to_json}"
       event.channel.receive(event)
 
       observing_classes = instance.observers.select { |ob| ob.observe?(event.channel_name) }

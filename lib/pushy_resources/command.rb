@@ -17,7 +17,6 @@ module PushyResources
     def execute!
       case name
       when :subscribe then
-        puts "SUBSCRIBED"
         channel.subscribe @connection
         fire_event :subscribed
       when :unsubscribe then

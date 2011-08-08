@@ -21,8 +21,6 @@ module PushyResources
       user = Factory.create :user
       chat = Factory.create :chat, :name => 'A chat about nothing'
 
-      puts "created chat #{chat.id}"
-
       login_as user
 
       chat_path = chat_path(chat)

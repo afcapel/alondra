@@ -10,7 +10,6 @@ module PushyResources
     def push_updates
       after_update do |record|
         event = Event.new(:event => :updated, :resource => record)
-        puts "pushing update #{event.to_json}"
         EventQueue.push(event)
       end
     end
