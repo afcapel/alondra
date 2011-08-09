@@ -8,14 +8,12 @@ module PushyResources
         # Otherwise reactor and application threads will end in a deadlock
 
         # Furthermore we can't use a blocking driver inside EventMachine
-        # and a non-blocking driver in a regular rails application, so we must
+        # and an evented driver in a regular rails application, so we must
         # choose the right driver in each case
 
         if EM.reactor_thread?
-          Rails.logger.info "reactor redis client selected"
           @reactor_redis_client ||= reactor_redis_client
         else
-          Rails.logger.info "synchronous redis client selected"
           @app_redis_client     ||= app_redis_client
         end
       end
@@ -58,8 +56,6 @@ module PushyResources
           EventRouter.process(event)
         end
       end
-
-      Rails.logger.info "Event queue started"
     end
 
     def send(event)

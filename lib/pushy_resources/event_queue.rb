@@ -14,7 +14,7 @@ module PushyResources
         if PushyResources.config.event_queue == :redis
           Rails.logger.info "selected Redis event queue"
           queue = RedisEventQueue.new
-          queue.start
+          queue.start if EM.reactor_thread?
           queue
         else
           Rails.logger.info "selected in memory event queue"

@@ -27,7 +27,7 @@ class @PushyClient
 
       console.log("Trigering event #{eventName} with resource #{resourceType} #{resource.id}")
 
-      $(this).trigger("#{eventName}", resource)
+      $(this).trigger("#{eventName}.#{resourceType}", resource)
 
 
     @socket.onerror = (error) =>

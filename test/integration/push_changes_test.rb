@@ -4,13 +4,9 @@ module PushyResources
 
     self.use_transactional_fixtures = false
 
-    Capybara.register_driver :selenium_chrome do |app|
-      Capybara::Selenium::Driver.new(app, :browser => :chrome)
-    end
-
     setup do
       clean_db
-      Capybara.default_driver = :selenium
+      Capybara.default_driver = :webkit
     end
 
     teardown do
@@ -27,7 +23,7 @@ module PushyResources
 
       visit chat_path
 
-      wait_until(10) do
+      wait_until(20) do
         Channel[chat_path].users.include?(user)
       end
 

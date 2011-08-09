@@ -2,7 +2,7 @@ module PushyResources
   class MockConnection < Connection
 
     def initialize(credentials = {})
-      super nil, credentials
+      super UUIDTools::UUID.random_create, credentials
     end
 
     def send(message)

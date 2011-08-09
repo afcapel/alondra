@@ -24,7 +24,7 @@ module PushyResources
 
         if EM.reactor_running?
           Rails.logger.info "Initializing server"
-          PushyResources::Server.run
+          Server.run
         else
           Thread.new do
             Rails.logger.info "Running EM reactor in new thread"

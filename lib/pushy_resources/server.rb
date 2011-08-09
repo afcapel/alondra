@@ -9,9 +9,9 @@ module PushyResources
     def run
       EM.synchrony do
 
-        Rails.logger.error "Server starting on 0.0.0.0:12345"
-
         EventQueue.select
+
+        Rails.logger.error "Server starting on 0.0.0.0:12345"
 
         EM::WebSocket.start(:host => '0.0.0.0', :port => 12345) do |websocket|
 

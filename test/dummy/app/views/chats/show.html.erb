@@ -37,11 +37,11 @@
 
 <script type="text/javascript">
   var client = new PushyClient('<%= chat_path(@path) %>', '<%= encrypted_token %>');
-  $(client).bind('subscribed', function(event, resource){
+  $(client).bind('subscribed.Chat', function(event, resource){
     console.log('Received subscribed event!');
   })
 
-  $(client).bind('updated', function(event, resource){
+  $(client).bind('updated.Chat', function(event, resource){
     $('#chat_name').text(resource.name);
   })
 </script>

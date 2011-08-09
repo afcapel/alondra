@@ -1,5 +1,8 @@
 module PushyResources
   class EventObserver
+    attr_accessor :event
+    attr_accessor :resource
+    attr_accessor :channel_name
 
     class << self
       def observed_patterns
@@ -49,6 +52,10 @@ module PushyResources
 
 
     def receive(event)
+      self.event        = event
+      self.resource     = event.resource
+      self.channel_name = event.channel_name
+
       matching_callbacks = self.class.callbacks.find_all { |c| c.matches?(event) }
       matching_callbacks.each do |callback|
         self.instance_exec(event, &callback.proc)
