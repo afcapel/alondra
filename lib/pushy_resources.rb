@@ -1,11 +1,11 @@
 require 'singleton'
-Dir[File.dirname(__FILE__) + '/pushy_resources/*.rb'].each {|file| require file }
+Dir[File.dirname(__FILE__) + '/pushy_resources/**/*.rb'].each {|file| require file }
 
 module PushyResources
    class PushyResources < Rails::Engine
 
      # Setting default configuration values
-     config.event_queue         = :memory
+     config.event_queue         = :zeromq
      config.redis_event_channel = 'PushyEvents'
      config.redis_server        = 'localhost'
      config.redis_port          = 6379

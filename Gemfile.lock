@@ -1,4 +1,12 @@
 GIT
+  remote: git://github.com/andrewvc/em-zeromq.git
+  revision: 7d3f2b6ed6e9f39b9d43a1c4dad78f49411bdfdf
+  specs:
+    em-zeromq (0.2.1)
+      eventmachine (>= 1.0.0.beta.3)
+      ffi-rzmq (>= 0.7.2)
+
+GIT
   remote: git://github.com/eventmachine/eventmachine.git
   revision: eeb7f129b2881455b92086e727ecda190e7abd4c
   specs:
@@ -71,6 +79,7 @@ GEM
       multi_json (~> 1.0)
     factory_girl (2.0.2)
     ffi (1.0.9)
+    ffi-rzmq (0.8.0)
     hike (1.2.0)
     hiredis (0.3.2)
     i18n (0.6.0)
@@ -160,6 +169,7 @@ DEPENDENCIES
   em-http-request
   em-synchrony
   em-websocket
+  em-zeromq!
   eventmachine!
   factory_girl
   hiredis (>= 0.3.1)

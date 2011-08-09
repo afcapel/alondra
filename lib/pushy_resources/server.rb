@@ -9,7 +9,7 @@ module PushyResources
     def run
       EM.synchrony do
 
-        EventQueue.select
+        EventQueue.selected
 
         Rails.logger.error "Server starting on 0.0.0.0:12345"
 

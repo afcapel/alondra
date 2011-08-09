@@ -5,7 +5,7 @@ module PushyResources
   class ConfigurationTest < ActiveSupport::TestCase
 
     test "it has default values" do
-      assert_equal :memory, PushyResources.config.event_queue
+      assert_equal :zeromq, PushyResources.config.event_queue
     end
 
     test "it allows to override default values" do
