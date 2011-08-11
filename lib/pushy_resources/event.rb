@@ -14,11 +14,12 @@ module PushyResources
 
 
     def self.fetch_resource(resource_type, attributes)
+      attributes.symbolize_keys!
       resource_class = Kernel.const_get(resource_type)
 
-      return attributes if resource_class == NilClass
+      return attributes unless resource_class < ActiveRecord::Base
 
-      if resource_class < ActiveRecord::Base && attributes[:id]
+      if attributes[:id].present?
         resource_class.where(:id => attributes[:id]).first ||
         build_resource(resource_class, attributes)
       else
