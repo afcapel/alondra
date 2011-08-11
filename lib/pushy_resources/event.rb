@@ -28,9 +28,13 @@ module PushyResources
     end
 
     def self.build_resource(resource_class, attributes)
+      reflections = resource_class.reflections
       resource_class.new.tap do |resource|
         attributes.each do |key, value|
-          resource.send("#{key}=", value) if resource.respond_to? "#{key}=".to_sym
+          next unless resource.respond_to? "#{key}=".to_sym
+          next if reflections[key] && reflections[key].klass != value.class
+
+          resource.send("#{key}=", value)
         end
       end
     end
