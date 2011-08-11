@@ -66,7 +66,7 @@ module PushyResources
     private
 
     def default_channel_name
-      resource_name = @resource.class.name.pluralize.underscore
+      resource_name = resource.class.name.pluralize.underscore
 
       if type == :updated
         "/#{resource_name}/#{resource.id}"
