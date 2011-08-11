@@ -13,8 +13,14 @@ module PushyResources
 
     def on_readable(socket, messages)
       messages.each do |message|
-        event = Event.from_json(message.copy_out_string)
-        EventRouter.process(event)
+        begin
+          event = Event.from_json(message.copy_out_string)
+          EventRouter.process(event)
+        rescue Exception => ex
+          puts "Error raised while processing message"
+          puts "#{ex.class}: #{ex.message}"
+          puts ex.backtrace.join("\n") if ex.respond_to? :backtrace
+        end
       end
     end
 

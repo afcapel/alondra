@@ -13,9 +13,12 @@ module PushyResources
 
         Rails.logger.error "Server starting on 0.0.0.0:12345"
 
+        puts "starting server on port: 1235"
+
         EM::WebSocket.start(:host => '0.0.0.0', :port => 12345) do |websocket|
 
           Rails.logger.info "Server started on 0.0.0.0:12345"
+          puts "Server started on 0.0.0.0:12345"
 
           websocket.onopen do
             token = websocket.request['query']['token']

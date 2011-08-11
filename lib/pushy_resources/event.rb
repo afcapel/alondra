@@ -7,7 +7,6 @@ module PushyResources
 
     def self.from_json(s)
       event_hash = ActiveSupport::JSON.decode(s).symbolize_keys
-      event_hash = event_hash.inject({}){|memo,(k,v)| memo[k.to_sym] = v; memo}
 
       event_hash[:resource] = fetch_resource(event_hash[:resource_type], event_hash[:resource])
       Event.new(event_hash)
@@ -17,14 +16,21 @@ module PushyResources
     def self.fetch_resource(resource_type, attributes)
       resource_class = Kernel.const_get(resource_type)
 
-      if resource_class == NilClass
-        attributes
+      return attributes if resource_class == NilClass
+
+      if resource_class < ActiveRecord::Base && attributes[:id]
+        resource_class.where(:id => attributes[:id]).first ||
+        build_resource(resource_class, attributes)
       else
-        resource = resource_class.new
+        build_resource(resource_class, attributes)
+      end
+    end
+
+    def self.build_resource(resource_class, attributes)
+      resource_class.new.tap do |resource|
         attributes.each do |key, value|
-          resource.send("#{key}=", value)
+          resource.send("#{key}=", value) if resource.respond_to? "#{key}=".to_sym
         end
-        resource
       end
     end
 
@@ -49,7 +55,7 @@ module PushyResources
         :resource_type => resource_type,
         :resource      => resource.as_json,
         :channel       => channel_name
-      })
+        })
     end
 
     private
