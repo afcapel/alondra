@@ -6,6 +6,7 @@ Gem::Specification.new do |s|
   s.description = "Push model updates to the client"
   s.files = Dir["lib/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.version = "0.0.1"
+  s.authors = ['Alberto F. Capel']
 
   # Dependencies
   s.add_dependency('eventmachine', '>= 1.0.0.beta.4')
