@@ -5,12 +5,13 @@ module PushyResources
   class ConfigurationTest < ActiveSupport::TestCase
 
     test "it has default values" do
-      assert_equal :zeromq, PushyResources.config.event_queue
+      assert_equal 12345, PushyResources.config.port
     end
 
     test "it allows to override default values" do
-      PushyResources.config.redis_host    = 'www.example.com'
-      assert_equal 'www.example.com', PushyResources.config.redis_host
+      assert_equal 'localhost', PushyResources.config.host
+      PushyResources.config.host    = 'www.example.com'
+      assert_equal 'www.example.com', PushyResources.config.host
     end
 
     test "it allows to define new variables" do

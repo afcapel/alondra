@@ -1,34 +1,48 @@
 module PushyResources
   class EventQueue
+    include Singleton
 
-    class << self
-      def push(event)
-        selected.send(event)
+    def self.push(event)
+      instance.send(event)
+    end
+
+    SOCKET_PATH = 'ipc:///tmp/pushy_resources'
+
+    attr_reader :received
+
+    def initialize
+      EM.next_tick do
+        context.connect(ZMQ::PULL, SOCKET_PATH, self)
       end
+    end
 
-      def selected
-        @selected ||= select
-      end
-
-      def select
-        case PushyResources.config.event_queue
-        when :redis then
-          Rails.logger.info "selected Redis event queue"
-          queue = RedisEventQueue.new
-          queue.start if EM.reactor_thread?
-          queue
-        when :zeromq
-          Rails.logger.info "selected ZeroMQ event queue"
-          ZeromqEventQueue.new
-        else
-          Rails.logger.info "selected in memory event queue"
-          EventQueue.new
+    def on_readable(socket, messages)
+      messages.each do |message|
+        begin
+          event = Event.from_json(message.copy_out_string)
+          EventRouter.process(event)
+        rescue Exception => ex
+          puts "Error raised while processing message"
+          puts "#{ex.class}: #{ex.message}"
+          puts ex.backtrace.join("\n") if ex.respond_to? :backtrace
         end
       end
     end
 
     def send(event)
-      raise NoMethodError.new('The selected event queue must implement a send method')
+      EM.next_tick do
+        push_socket.send_msg(event.to_json)
+      end
+    end
+
+    private
+
+    def push_socket
+      @push_socket ||= context.bind(ZMQ::PUSH, SOCKET_PATH)
+    end
+
+    def context
+      @context ||= EM::ZeroMQ::Context.new(1)
     end
   end
 end

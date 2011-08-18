@@ -9,16 +9,11 @@ module PushyResources
     def run
       EM.synchrony do
 
-        EventQueue.selected
-
         Rails.logger.error "Server starting on 0.0.0.0:12345"
 
-        puts "starting server on port: 12345"
+        puts "starting server on port: #{PushyResources.config.port}"
 
-        EM::WebSocket.start(:host => '0.0.0.0', :port => 12345) do |websocket|
-
-          Rails.logger.info "Server started on 0.0.0.0:12345"
-          puts "Server started on 0.0.0.0:12345"
+        EM::WebSocket.start(:host => '0.0.0.0', :port => PushyResources.config.port) do |websocket|
 
           websocket.onopen do
             token = websocket.request['query']['token']
@@ -44,11 +39,6 @@ module PushyResources
             MessageDispatcher.dispatch(msg, Connections[websocket])
           end
         end
-      end
-
-      EM.error_handler do |error|
-        Rails.logger.error "Error raised during event loop: #{error.message}"
-        Rails.logger.error error.backtrace.join("\n")
       end
     end
   end

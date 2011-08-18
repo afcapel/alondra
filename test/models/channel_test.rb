@@ -32,13 +32,15 @@ module PushyResources
       channel   = Channel.new('test deliver events channel')
       channel.subscribe @connection
 
+      assert @connection.channels.include?(channel)
+
       event = Event.new :event => :created, :resource => Chat.new, :channel => 'test deliver events channel'
 
       channel.receive event
 
       assert EM.reactor_running?
 
-      sleep(0.1) # Leave event machine to catch up
+      sleep(0.5) # Leave event machine to catch up
 
       last_message = @connection.messages.last
       assert_equal event.to_json, last_message

@@ -5,10 +5,11 @@ module PushyResources
    class PushyResources < Rails::Engine
 
      # Setting default configuration values
-     config.event_queue         = :zeromq
-     config.redis_event_channel = 'PushyEvents'
-     config.redis_server        = 'localhost'
-     config.redis_port          = 6379
+     config.port  = 12345
+     config.host  = 'localhost'
+     # config.redis_event_channel = 'PushyEvents'
+     # config.redis_server        = 'localhost'
+     # config.redis_port          = 6379
 
      initializer "sessions for flash websockets" do
        Rails.application.config.session_store :cookie_store, httponly: false
@@ -19,23 +20,30 @@ module PushyResources
 
         ActiveRecord::Base.extend Pushing
 
-        Rails.logger.info "Loading event observers in #{File.join(Rails.root, 'app', 'observers', '*.rb')}"
-        Dir[File.join(Rails.root, 'app', 'observers', '*.rb')].each {|file| Rails.logger.info "requiring #{file}"; require file }
+        PushyResources.start_server if ENV['PUSHY_SERVER']
+     end
 
-        if EM.reactor_running?
-          Rails.logger.info "Initializing server"
-          Server.run
-        else
-          Thread.new do
-            Rails.logger.info "Running EM reactor in new thread"
-            EM.run { Server.run }
-          end
-        end
+     def self.start_server
+       Rails.logger.info "Loading event observers in #{File.join(Rails.root, 'app', 'observers', '*.rb')}"
+       Dir[File.join(Rails.root, 'app', 'observers', '*.rb')].each {|file| Rails.logger.info "requiring #{file}"; require file }
 
-        EM.error_handler do |error|
-          Rails.logger.error "Error raised during event loop: #{error.message}"
-          Rails.logger.error error.stacktrace
-        end
+       if EM.reactor_running?
+         Rails.logger.info "Initializing server"
+         Server.run
+       else
+         Thread.new do
+           puts "Running EM reactor in new thread"
+           Rails.logger.info "Running EM reactor in new thread"
+           Server.run
+         end
+       end
+
+       EM.error_handler do |error|
+         puts "Error raised during event loop #{error.class} #{error.message}"
+         puts error.stacktrace.join("\n")
+         Rails.logger.error "Error raised during event loop: #{error.message}"
+         Rails.logger.error error.stacktrace
+       end
      end
    end
 end

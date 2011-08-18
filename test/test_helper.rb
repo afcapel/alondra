@@ -1,5 +1,6 @@
 # Configure Rails Environment
-ENV["RAILS_ENV"] = "test"
+ENV["RAILS_ENV"]    = "test"
+ENV["PUSHY_SERVER"] = 'true'
 
 require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 require "rails/test_help"
