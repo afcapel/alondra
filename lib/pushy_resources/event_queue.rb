@@ -19,6 +19,7 @@ module PushyResources
     def on_readable(socket, messages)
       messages.each do |message|
         begin
+          Rails.logger.debug "Received event in queue #{message.copy_out_string}"
           event = Event.from_json(message.copy_out_string)
           EventRouter.process(event)
         rescue Exception => ex
@@ -30,7 +31,9 @@ module PushyResources
     end
 
     def send(event)
+      puts "event in queue. Reactor running? #{EM.reactor_running?}"
       EM.next_tick do
+        Rails.logger.debug "Queuing event #{event.to_json}"
         push_socket.send_msg(event.to_json)
       end
     end

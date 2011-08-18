@@ -10,6 +10,7 @@ module PushyResources
     def push_updates
       after_update do |record|
         event = Event.new(:event => :updated, :resource => record)
+        Rails.logger.debug "resource #{record.class.name} #{record.id} updated. Sending event."
         EventQueue.push(event)
       end
     end
