@@ -12,6 +12,23 @@ module PushyResources
       def [](name)
         list[name] ||= Channel.new(name)
       end
+
+      def default_name_for(type, resource_or_class)
+
+        if resource_or_class.kind_of?(Class)
+          resource_name = resource_or_class.name.pluralize.underscore
+        else
+          resource      = resource_or_class
+          resource_name = resource.class.name.pluralize.underscore
+        end
+
+        case type
+        when :updated then
+          "/#{resource_name}/#{resource.id}"
+        else
+          "/#{resource_name}/"
+        end
+      end
     end
 
     def initialize(name)
@@ -36,8 +53,8 @@ module PushyResources
       connections.delete connection
 
       event = Event.new :event    => :unsubscribed,
-                        :resource => connection.user || connection.credentials,
-                        :channel  => name
+      :resource => connection.user || connection.credentials,
+      :channel  => name
 
       event.fire!
     end

@@ -1,5 +1,4 @@
 class Message < ActiveRecord::Base
   belongs_to :chat
-  push_changes
-
+  push :changes, :to => :chat
 end

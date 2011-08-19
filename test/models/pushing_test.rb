@@ -4,28 +4,31 @@ module PushyResources
 
   class PushingTest < ActiveSupport::TestCase
 
-    def setup
-      @connection = MockConnection.new
-      @channel    = Channel['/messages/']
+    test "publish created events to the specified channel" do
+      chat       = Factory.create :chat
+      connection = MockConnection.new
+      message = chat.messages.build(:text => 'test message')
 
-      @channel.subscribe @connection
-    end
+      channel_name = Channel.default_name_for(:updated, chat)
+      assert channel_name =~ /chats\/\d+/
 
-    test "publish created events" do
-      chat = Factory.create :chat
-      message = chat.messages.create(:text => 'test message')
+      channel    = Channel[channel_name]
+      channel.subscribe connection
 
       sleep(0.1)
 
-      assert @connection.messages.last, "should publish a message"
+      message.save!
 
-      last_event = ActiveSupport::JSON.decode(@connection.messages.last)
+      sleep(0.1)
+
+      assert connection.messages.last, "should publish a message"
+
+      last_event = ActiveSupport::JSON.decode(connection.messages.last)
       resource   = last_event['resource']
 
       assert_equal 'created', last_event['event']
       assert_equal 'Message', last_event['resource_type']
       assert_equal message.id, resource['id']
     end
-
   end
 end

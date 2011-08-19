@@ -7,9 +7,6 @@ module PushyResources
     # Setting default configuration values
     config.port  = 12345
     config.host  = 'localhost'
-    # config.redis_event_channel = 'PushyEvents'
-    # config.redis_server        = 'localhost'
-    # config.redis_port          = 6379
 
     initializer "sessions for flash websockets" do
       Rails.application.config.session_store :cookie_store, httponly: false
