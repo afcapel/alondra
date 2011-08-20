@@ -20,8 +20,7 @@ module PushyResources
       return attributes unless resource_class < ActiveRecord::Base
 
       if attributes[:id].present?
-        resource_class.where(:id => attributes[:id]).first ||
-        build_resource(resource_class, attributes)
+        resource_class.where(:id => attributes[:id]).first || build_resource(resource_class, attributes)
       else
         build_resource(resource_class, attributes)
       end

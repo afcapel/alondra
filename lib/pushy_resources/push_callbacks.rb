@@ -34,6 +34,7 @@ module PushyResources
       event_attrs.merge! :channel => channel if channel
 
       event = Event.new(event_attrs)
+
       EventQueue.push event
     end
 

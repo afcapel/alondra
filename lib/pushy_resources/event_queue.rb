@@ -2,6 +2,10 @@ module PushyResources
   class EventQueue
     include Singleton
 
+    def self.start
+      self.instance
+    end
+
     def self.push(event)
       instance.send(event)
     end
@@ -11,8 +15,11 @@ module PushyResources
     attr_reader :received
 
     def initialize
-      EM.next_tick do
-        context.connect(ZMQ::PULL, SOCKET_PATH, self)
+      Rails.logger.debug "Starting event queue"
+
+      if ENV['PUSHY_SERVER'].present?
+        conn = context.bind(ZMQ::SUB, SOCKET_PATH, self)
+        conn.setsockopt ZMQ::SUBSCRIBE, '' # receive all
       end
     end
 
@@ -23,16 +30,15 @@ module PushyResources
           event = Event.from_json(message.copy_out_string)
           EventRouter.process(event)
         rescue Exception => ex
-          puts "Error raised while processing message"
-          puts "#{ex.class}: #{ex.message}"
-          puts ex.backtrace.join("\n") if ex.respond_to? :backtrace
+          Rails.logger.error "Error raised while processing message"
+          Rails.logger.error "#{ex.class}: #{ex.message}"
+          Rails.logger.error ex.backtrace.join("\n") if ex.respond_to? :backtrace
         end
       end
     end
 
     def send(event)
-      EM.next_tick do
-        Rails.logger.debug "Queuing event #{event.to_json}"
+      EM.schedule do
         push_socket.send_msg(event.to_json)
       end
     end
@@ -40,7 +46,7 @@ module PushyResources
     private
 
     def push_socket
-      @push_socket ||= context.bind(ZMQ::PUSH, SOCKET_PATH)
+      @push_socket ||= context.connect(ZMQ::PUB, SOCKET_PATH)
     end
 
     def context

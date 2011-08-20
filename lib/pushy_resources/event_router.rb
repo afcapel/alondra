@@ -10,6 +10,7 @@ module PushyResources
       event.channel.receive(event)
 
       observing_classes = instance.observers.select { |ob| ob.observe?(event.channel_name) }
+
       observing_classes.each do |observer_class|
         new_instance = observer_class.new
         new_instance.receive(event)

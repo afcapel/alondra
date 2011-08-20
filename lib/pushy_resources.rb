@@ -19,7 +19,7 @@ module PushyResources
 
     initializer "load observers" do
       Rails.logger.info "Loading event observers in #{File.join(Rails.root, 'app', 'observers', '*.rb')}"
-      Dir[File.join(Rails.root, 'app', 'observers', '*.rb')].each {|file| Rails.logger.info "requiring #{file}"; require file }
+      Dir[File.join(Rails.root, 'app', 'observers', '*.rb')].each { |file| require file }
     end
 
     initializer "start event loop" do
