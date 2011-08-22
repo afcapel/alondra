@@ -27,26 +27,28 @@ module PushyResources
     end
 
     def push_event(type, record, options)
-      event_attrs = { :event => type, :resource => record }
+      channels = channels_from(type, record, options)
 
-      channel = channel_from(record, options)
-
-      event_attrs.merge! :channel => channel if channel
-
-      event = Event.new(event_attrs)
-
-      EventQueue.push event
+      channels.each do |channel|
+        event = Event.new(:event => type, :resource => record, :channel => channel)
+        EventQueue.push event
+      end
     end
 
-    def channel_from(record, options)
+    def channels_from(type, record, options)
       case options[:to]
       when String then
-        options[:to]
+        [options[:to]]
       when Symbol then
-        target = record.send options[:to]
-        Channel.default_name_for(:updated, target)
+        recipients = record.send options[:to]
+
+        if Enumerable === recipients
+          recipients.collect { |r| Channel.default_name_for(r) }
+        else
+          [Channel.default_name_for(recipients)]
+        end
       else
-        nil
+        [Channel.default_name_for(record)]
       end
     end
   end

@@ -9,7 +9,7 @@ module PushyResources
       connection = MockConnection.new
       message = chat.messages.build(:text => 'test message')
 
-      channel_name = Channel.default_name_for(:updated, chat)
+      channel_name = Channel.default_name_for(chat)
       assert channel_name =~ /chats\/\d+/
 
       channel    = Channel[channel_name]

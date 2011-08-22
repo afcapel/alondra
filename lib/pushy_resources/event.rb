@@ -42,7 +42,13 @@ module PushyResources
       @type          = event_hash[:event].to_sym
       @resource      = event_hash[:resource]
       @resource_type = event_hash[:resource_type] || resource.class.name
-      @channel_name  = event_hash[:channel] || Channel.default_name_for(type, resource)
+
+      if event_hash[:channel].present?
+        @channel_name  = event_hash[:channel]
+      else
+        channel_type = type == :updated ? :member : :collection
+        Channel.default_name_for(resource, channel_type)
+      end
     end
 
     def channel

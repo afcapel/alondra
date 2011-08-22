@@ -13,7 +13,7 @@ module PushyResources
         list[name] ||= Channel.new(name)
       end
 
-      def default_name_for(type, resource_or_class)
+      def default_name_for(resource_or_class, type = :member)
 
         if resource_or_class.kind_of?(Class)
           resource_name = resource_or_class.name.pluralize.underscore
@@ -23,9 +23,9 @@ module PushyResources
         end
 
         case type
-        when :updated then
+        when :member then
           "/#{resource_name}/#{resource.id}"
-        else
+        when :collection then
           "/#{resource_name}/"
         end
       end
