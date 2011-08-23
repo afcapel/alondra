@@ -26,7 +26,6 @@ module PushyResources
     def on_readable(socket, messages)
       messages.each do |message|
         begin
-          Rails.logger.debug "Received event in queue #{message.copy_out_string}"
           event = Event.from_json(message.copy_out_string)
           EventRouter.process(event)
         rescue Exception => ex

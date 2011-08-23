@@ -24,6 +24,7 @@ module PushyResources
         end
 
         websocket.onclose do
+          Rails.logger.info "Connection closed"
           Connections[websocket].destroy!
         end
 
@@ -38,10 +39,6 @@ module PushyResources
           MessageDispatcher.dispatch(msg, Connections[websocket])
         end
       end
-
-      # EM.add_periodic_timer(5) do
-      #   Rails.logger.info "Event loop running: #{Time.now}"
-      # end
 
       EM.error_handler do |error|
         Rails.logger.error "Error raised during event loop: #{error.message}"

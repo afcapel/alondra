@@ -53,8 +53,8 @@ module PushyResources
       connections.delete connection
 
       event = Event.new :event    => :unsubscribed,
-      :resource => connection.user || connection.credentials,
-      :channel  => name
+                        :resource => connection.user || connection.credentials,
+                        :channel  => name
 
       event.fire!
     end

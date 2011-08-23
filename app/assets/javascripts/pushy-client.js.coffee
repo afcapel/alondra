@@ -6,18 +6,41 @@
 window.WEB_SOCKET_SWF_LOCATION = "/assets/WebSocketMain.swf"
 
 class @PushyClient
-  constructor: (channels, token) ->
-    @socket = new WebSocket "ws://localhost:12345?token=#{token}"
+  constructor: (channels, token, retry = 5000) ->
+    @channels = channels
+    @token    = token
+    @retry    = retry
+
+    this.connect()
+
+  subscribe: (channel) ->
+    console.log "subscribing to #{channel}"
+    subscription =
+      command: 'subscribe'
+      channel: channel
+
+    @socket.send JSON.stringify(subscription)
+
+  connect: ->
+    console.log("connecting...")
+    @socket   = new WebSocket "ws://localhost:12345?token=#{@token}"
 
     @socket.onopen = () =>
       console.log("opened connection")
-      if channels instanceof Array
-        @subscribe channel for channel in channels
+      if @reconnectInterval
+        console.log("reconected!")
+        clearInterval(@reconnectInterval)
+        @reconnectInterval = null
+
+      if @channels instanceof Array
+        this.subscribe(channel) for channel in @channels
       else
-        @subscribe channels
+        this.subscribe(@channels)
 
     @socket.onclose = () =>
       console.log("connection closed")
+      this.reconnect()
+
 
     @socket.onmessage = (message) =>
       serverEvent  = JSON.parse(message.data)
@@ -32,12 +55,14 @@ class @PushyClient
 
     @socket.onerror = (error) =>
       console.log("Error #{error}")
+      this.reconnect()
 
-  subscribe: (channel, credentials) ->
-    console.log "subscribing to #{channel}"
-    subscription =
-      command: 'subscribe'
-      channel: channel
-      credentials: credentials
+  reconnect: ->
+    return if !@retry || @reconnectInterval
 
-    @socket.send JSON.stringify(subscription)
+    console.log("trying to reconnect")
+
+    @reconnectInterval = setInterval =>
+      this.connect()
+    ,@retry
+
