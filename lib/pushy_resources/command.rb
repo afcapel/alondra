@@ -26,9 +26,12 @@ module PushyResources
     end
 
     def fire_event(event_type)
-      event = Event.new :event    => event_type,
-                        :resource => @connection.user || @connection.credentials,
-                        :channel  => @channel_name
+      resource = @connection.user || @connection.credentials
+
+      event = Event.new :event         => event_type,
+                        :resource      => resource,
+                        :resource_type => resource.class.name,
+                        :channel       => @channel_name
       event.fire!
     end
   end

@@ -1,4 +1,11 @@
 GIT
+  remote: git://github.com/FooBarWidget/capybara-webkit.git
+  revision: 3b025e7115c8f9688e83df47937f53c5ed029e18
+  specs:
+    capybara-webkit (0.6.0)
+      capybara (~> 1.0.0)
+
+GIT
   remote: git://github.com/andrewvc/em-zeromq.git
   revision: 7d3f2b6ed6e9f39b9d43a1c4dad78f49411bdfdf
   specs:
@@ -55,8 +62,6 @@ GEM
       rack-test (>= 0.5.4)
       selenium-webdriver (~> 2.0)
       xpath (~> 0.1.4)
-    capybara-webkit (0.6.0)
-      capybara (~> 1.0.0)
     childprocess (0.2.1)
       ffi (~> 1.0.6)
     coffee-script (2.2.0)
@@ -164,7 +169,7 @@ PLATFORMS
 
 DEPENDENCIES
   capybara
-  capybara-webkit
+  capybara-webkit!
   coffee-script
   em-http-request
   em-synchrony

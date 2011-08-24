@@ -37,8 +37,10 @@
 
 <script type="text/javascript">
   var client = new PushyClient('<%= chat_path(@path) %>', '<%= encrypted_token %>');
+
   $(client).bind('subscribed.Chat', function(event, resource){
     console.log('Received subscribed event!');
+    $('#messages').append('<div class="message">Subscribed to channel</div>');
   })
 
   $(client).bind('updated.Chat', function(event, resource){

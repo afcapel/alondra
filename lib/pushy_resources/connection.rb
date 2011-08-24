@@ -43,9 +43,9 @@ module PushyResources
       User.where(credentials_to_param).first if credentials_to_param
     end
 
-    def receive(event)
-      Rails.logger.info "sending event #{event.to_json}"
-      websocket.send event.to_json
+    def receive(event_or_message)
+      Rails.logger.debug "sending: #{event_or_message.to_json}"
+      websocket.send event_or_message.to_json
     end
 
     def destroy!

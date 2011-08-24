@@ -24,10 +24,9 @@ module PushyResources
     end
 
     def on_readable(socket, messages)
-      messages.each do |message|
+      messages.each do |received|
         begin
-          event = Event.from_json(message.copy_out_string)
-          EventRouter.process(event)
+          parse received.copy_out_string
         rescue Exception => ex
           Rails.logger.error "Error raised while processing message"
           Rails.logger.error "#{ex.class}: #{ex.message}"
@@ -36,9 +35,21 @@ module PushyResources
       end
     end
 
-    def send(event)
+    def parse(received_string)
+      received_hash = ActiveSupport::JSON.decode(received_string).symbolize_keys
+      if received_hash[:event]
+        event = Event.new(received_hash)
+        EventRouter.process(event)
+      elsif received_hash[:message]
+        message = Message.new(received_hash[:content])
+      else
+        Rails.logger.error "Not recognized message type #{received.copy_out_string}"
+      end
+    end
+
+    def send(message)
       EM.schedule do
-        push_socket.send_msg(event.to_json)
+        push_socket.send_msg(message.to_json)
       end
     end
 

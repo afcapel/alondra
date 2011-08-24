@@ -1,4 +1,5 @@
 require 'test_helper'
+
 module PushyResources
   class ChatPushingTest < ActiveSupport::IntegrationCase
 

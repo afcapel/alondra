@@ -13,6 +13,17 @@ module PushyResources
         list[name] ||= Channel.new(name)
       end
 
+      def for(records)
+        case records
+        when String
+          [Channel[records]]
+        when Enumerable then
+          records.collect { |r| Channel.default_name_for(r) }
+        else
+          [Channel.default_name_for(records)]
+        end
+      end
+
       def default_name_for(resource_or_class, type = :member)
 
         if resource_or_class.kind_of?(Class)
@@ -38,8 +49,8 @@ module PushyResources
     end
 
     def subscribe(connection)
-      sid = em_channel.subscribe do |event|
-        connection.receive event
+      sid = em_channel.subscribe do |event_or_message|
+        connection.receive event_or_message
       end
 
       connection.channels << self
@@ -59,8 +70,8 @@ module PushyResources
       event.fire!
     end
 
-    def receive(event)
-      em_channel << event
+    def receive(event_or_message)
+      em_channel << event_or_message
     end
 
     def users

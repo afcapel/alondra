@@ -14,7 +14,6 @@ class @PushyClient
     this.connect()
 
   subscribe: (channel) ->
-    console.log "subscribing to #{channel}"
     subscription =
       command: 'subscribe'
       channel: channel
@@ -22,13 +21,10 @@ class @PushyClient
     @socket.send JSON.stringify(subscription)
 
   connect: ->
-    console.log("connecting...")
     @socket   = new WebSocket "ws://localhost:12345?token=#{@token}"
 
     @socket.onopen = () =>
-      console.log("opened connection")
       if @reconnectInterval
-        console.log("reconected!")
         clearInterval(@reconnectInterval)
         @reconnectInterval = null
 
@@ -38,29 +34,32 @@ class @PushyClient
         this.subscribe(@channels)
 
     @socket.onclose = () =>
-      console.log("connection closed")
       this.reconnect()
 
 
     @socket.onmessage = (message) =>
-      serverEvent  = JSON.parse(message.data)
-      eventName    = serverEvent.event
-      resourceType = serverEvent.resource_type
-      resource     = serverEvent.resource
-
-      console.log("Trigering event #{eventName} with resource #{resourceType} #{resource.id}")
-
-      $(this).trigger("#{eventName}.#{resourceType}", resource)
+      msg = JSON.parse(message.data)
+      if msg.event
+        this.process(msg)
+      else
+        this.execute(msg)
 
 
     @socket.onerror = (error) =>
-      console.log("Error #{error}")
       this.reconnect()
+
+  process: (serverEvent) ->
+    eventName    = serverEvent.event
+    resourceType = serverEvent.resource_type
+    resource     = serverEvent.resource
+
+    $(this).trigger("#{eventName}.#{resourceType}", resource)
+
+  execute: (message) ->
+    eval(message.message)
 
   reconnect: ->
     return if !@retry || @reconnectInterval
-
-    console.log("trying to reconnect")
 
     @reconnectInterval = setInterval =>
       this.connect()

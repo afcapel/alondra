@@ -12,7 +12,7 @@ module PushyResources
     end
 
     def clean_db
-      [User, Chat, Message].each { |model| model.delete_all }
+      [User, Chat, ::Message].each { |model| model.delete_all }
     end
   end
 end
