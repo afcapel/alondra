@@ -15,23 +15,22 @@ module PushyResources
       EM::WebSocket.start(:host => '0.0.0.0', :port => PushyResources.config.port) do |websocket|
 
         websocket.onopen do
-          token = websocket.request['query']['token']
 
-          credentials = CredentialsParser.parse(token)
+          credentials = CredentialsParser.parse(websocket)
+
           Rails.logger.info "client connected. credentials: #{credentials}"
-
           Connection.new(websocket, credentials)
         end
 
         websocket.onclose do
           Rails.logger.info "Connection closed"
-          Connections[websocket].destroy!
+          Connections[websocket].destroy! if Connections[websocket].present?
         end
 
         websocket.onerror do |ex|
           Rails.logger.error "Error: #{ex.message}"
           Rails.logger.error ex.backtrace.join("\n")
-          Connections[websocket].destroy!
+          Connections[websocket].destroy! if Connections[websocket]
         end
 
         websocket.onmessage do |msg|

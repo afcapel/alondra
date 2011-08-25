@@ -6,10 +6,13 @@
 window.WEB_SOCKET_SWF_LOCATION = "/assets/WebSocketMain.swf"
 
 class @PushyClient
-  constructor: (channels, token, retry = 5000) ->
+  constructor: (host, port, channels, token = null, retry = 5000) ->
     @channels = channels
     @token    = token
     @retry    = retry
+    @url = "ws://#{host}:#{port}"
+
+    @url += "?token=#{@token}" if @token
 
     this.connect()
 
@@ -21,7 +24,7 @@ class @PushyClient
     @socket.send JSON.stringify(subscription)
 
   connect: ->
-    @socket   = new WebSocket "ws://localhost:12345?token=#{@token}"
+    @socket   = new WebSocket(@url)
 
     @socket.onopen = () =>
       if @reconnectInterval
