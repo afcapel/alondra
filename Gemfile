@@ -27,7 +27,7 @@ gem 'uuidtools'
 gem 'thin'
 
 gem 'capybara'
-gem 'capybara-webkit', :git => 'git://github.com/FooBarWidget/capybara-webkit.git'
+gem 'capybara-webkit', :git => 'git://github.com/thoughtbot/capybara-webkit.git'
 gem 'launchy'
 gem 'factory_girl'
 

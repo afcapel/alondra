@@ -1,5 +1,7 @@
 module PushyResources
   class EventObserver
+    include Pushing
+
     attr_accessor :event
     attr_accessor :resource
     attr_accessor :channel_name
