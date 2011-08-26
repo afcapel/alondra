@@ -1,4 +1,4 @@
-module PushyResources
+module Alondra
   class Channel
     attr_reader :name
     attr_reader :em_channel

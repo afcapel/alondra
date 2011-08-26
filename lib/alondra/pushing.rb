@@ -1,4 +1,4 @@
-module PushyResources
+module Alondra
   module Pushing
     def push(options)
       raise 'You need to specify the channel to push' unless options[:to]

@@ -33,10 +33,10 @@
 
 <%= link_to 'Back', chats_path %>
 
-<%= javascript_include_tag 'pushy-client' %>
+<%= javascript_include_tag 'alondra-client' %>
 
 <script type="text/javascript">
-  var client = new PushyClient('localhost', 12345, '<%= chat_path(@path) %>', '<%= encrypted_token %>');
+  var client = new AlondraClient('localhost', 12345, '<%= chat_path(@path) %>', '<%= encrypted_token %>');
 
   $(client).bind('subscribed.Chat', function(event, resource){
     console.log('Received subscribed event!');

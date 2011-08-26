@@ -1,6 +1,6 @@
 require 'test_helper'
 
-module PushyResources
+module Alondra
   class PushMessagesTest < ActiveSupport::IntegrationCase
     self.use_transactional_fixtures = false
 

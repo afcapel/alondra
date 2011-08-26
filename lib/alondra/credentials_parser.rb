@@ -1,4 +1,4 @@
-module PushyResources
+module Alondra
   module CredentialsParser
     extend self
 
@@ -17,7 +17,6 @@ module PushyResources
     end
 
     def parse_cookie(cookie)
-      puts "credentials for cookie: #{cookie}"
       begin
         cookies = cookie.split(';')
         session_key = Rails.application.config.session_options[:key]

@@ -1,4 +1,4 @@
-module PushyResources
+module Alondra
   class Message
     attr_reader :content
 

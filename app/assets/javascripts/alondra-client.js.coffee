@@ -5,7 +5,7 @@
 
 window.WEB_SOCKET_SWF_LOCATION = "/assets/WebSocketMain.swf"
 
-class @PushyClient
+class @AlondraClient
   constructor: (host, port, channels, token = null, retry = 5000) ->
     @channels = channels
     @token    = token

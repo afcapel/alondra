@@ -1,4 +1,4 @@
-module PushyResources
+module Alondra
   module ChangesCallbacks
     extend self
 

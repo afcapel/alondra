@@ -1,4 +1,4 @@
-module PushyResources
+module Alondra
   class ObserverCallback
     attr_reader :event_type
     attr_reader :options

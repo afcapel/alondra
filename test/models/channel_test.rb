@@ -1,6 +1,6 @@
 require 'test_helper'
 
-module PushyResources
+module Alondra
 
   class ChannelTest < ActiveSupport::TestCase
 

@@ -1,4 +1,4 @@
-module PushyResources
+module Alondra
   class EventRouter
     include Singleton
 

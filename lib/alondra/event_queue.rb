@@ -1,4 +1,4 @@
-module PushyResources
+module Alondra
   class EventQueue
     include Singleton
 
@@ -10,14 +10,14 @@ module PushyResources
       instance.send(event)
     end
 
-    SOCKET_PATH = 'ipc:///tmp/pushy_resources'
+    SOCKET_PATH = 'ipc:///tmp/alondra'
 
     attr_reader :received
 
     def initialize
       Rails.logger.debug "Starting event queue"
 
-      if ENV['PUSHY_SERVER'].present?
+      if ENV['ALONDRA_SERVER'].present?
         conn = context.bind(ZMQ::SUB, SOCKET_PATH, self)
         conn.setsockopt ZMQ::SUBSCRIBE, '' # receive all
       end

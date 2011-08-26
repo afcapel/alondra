@@ -7,7 +7,7 @@ development:
   adapter: mysql2
   host: localhost
   encoding: utf8
-  database: pushy_resources_development
+  database: alondra_development
   pool: 5
   timeout: 5000
 
@@ -18,7 +18,7 @@ test:
   adapter: mysql2
   host: localhost
   encoding: utf8
-  database: pushy_resources_test
+  database: alondra_test
   pool: 5
   timeout: 5000
 
@@ -26,6 +26,6 @@ production:
   adapter: mysql2
   host: localhost
   encoding: utf8
-  database: pushy_resources_production
+  database: alondra_production
   pool: 5
   timeout: 5000

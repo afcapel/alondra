@@ -2,17 +2,17 @@ require 'em-websocket'
 require 'em-synchrony'
 require 'em-synchrony/em-http'
 
-module PushyResources
+module Alondra
   module Server
     extend self
 
     def run
       EventQueue.start
 
-      puts "Server starting on port #{PushyResources.config.port}"
-      Rails.logger.error "Server starting on port #{PushyResources.config.port}"
+      puts "Server starting on port #{Alondra.config.port}"
+      Rails.logger.error "Server starting on port #{Alondra.config.port}"
 
-      EM::WebSocket.start(:host => '0.0.0.0', :port => PushyResources.config.port) do |websocket|
+      EM::WebSocket.start(:host => '0.0.0.0', :port => Alondra.config.port) do |websocket|
 
         websocket.onopen do
 

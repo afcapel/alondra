@@ -1,4 +1,4 @@
-module PushyResources
+module Alondra
   class Event
     attr_reader :channel_name
     attr_reader :type

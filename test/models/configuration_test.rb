@@ -1,22 +1,22 @@
 require 'test_helper'
 
-module PushyResources
+module Alondra
 
   class ConfigurationTest < ActiveSupport::TestCase
 
     test "it has default values" do
-      assert_equal 12345, PushyResources.config.port
+      assert_equal 12345, Alondra.config.port
     end
 
     test "it allows to override default values" do
-      assert_equal 'localhost', PushyResources.config.host
-      PushyResources.config.host    = 'www.example.com'
-      assert_equal 'www.example.com', PushyResources.config.host
+      assert_equal 'localhost', Alondra.config.host
+      Alondra.config.host    = 'www.example.com'
+      assert_equal 'www.example.com', Alondra.config.host
     end
 
     test "it allows to define new variables" do
-      PushyResources.config.test_variable = 'something'
-      assert_equal 'something', PushyResources.config.test_variable
+      Alondra.config.test_variable = 'something'
+      assert_equal 'something', Alondra.config.test_variable
     end
   end
 end

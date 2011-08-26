@@ -1,4 +1,4 @@
-module PushyResources
+module Alondra
   module ChangesPush
     def push(event_type, options = {})
       case event_type

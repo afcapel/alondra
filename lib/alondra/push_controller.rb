@@ -1,4 +1,4 @@
-module PushyResources
+module Alondra
   class PushController
     include ActiveSupport::Configurable
     include AbstractController::Logger

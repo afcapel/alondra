@@ -1,4 +1,4 @@
-module PushyResources
+module Alondra
   module IntegrationHelper
     def login_as(user)
       visit new_session_path
