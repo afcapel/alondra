@@ -48,7 +48,7 @@ module Alondra
     end
 
     def send(message)
-      EM.schedule do
+      EM.next_tick do
         push_socket.send_msg(message.to_json)
       end
     end

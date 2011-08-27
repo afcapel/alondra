@@ -9,6 +9,7 @@ Gem::Specification.new do |s|
   s.authors = ['Alberto F. Capel']
 
   # Dependencies
+  s.add_dependency('daemons')
   s.add_dependency('eventmachine', '>= 1.0.0.beta.4')
   s.add_dependency('em-websocket')
   s.add_dependency('em-synchrony')
