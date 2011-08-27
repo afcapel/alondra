@@ -14,4 +14,6 @@ Gem::Specification.new do |s|
   s.add_dependency('em-websocket')
   s.add_dependency('em-synchrony')
   s.add_dependency('em-http-request')
+  s.add_dependency('uuidtools')
+  s.add_dependency('em-zeromq')
 end

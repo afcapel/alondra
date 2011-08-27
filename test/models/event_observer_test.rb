@@ -130,13 +130,13 @@ module Alondra
 
       Command.new(connection, :command => 'subscribe', :channel => '/chats/').execute!
 
-      sleep(2.5)
+      EM.reactor_thread.join(2.5)
 
       assert ChatObserver.subscribed_clients.include?(user)
 
       Command.new(connection, :command => 'unsubscribe', :channel => '/chats/').execute!
 
-      sleep(2.5)
+      EM.reactor_thread.join(2.5)
 
       assert !ChatObserver.subscribed_clients.include?(user)
     end

@@ -28,7 +28,7 @@ module Alondra
       Rails.application.config.session_store :cookie_store, httponly: false
     end
 
-    initializer "initializing alondra server" do
+    initializer "extending active record" do
       Rails.logger.info "Extending active record"
       ActiveRecord::Base.extend ChangesPush
     end
@@ -42,17 +42,19 @@ module Alondra
 
       if EM.reactor_running?
         Rails.logger.info "Initializing server"
+        EventQueue.instance.start
         Server.run if ENV['ALONDRA_SERVER']
       else
         Thread.new do
           Rails.logger.info "Running EM reactor in new thread"
           EM.synchrony do
+            EventQueue.instance.start
             Server.run if ENV['ALONDRA_SERVER']
           end
         end
-
-        Server.die_gracefully_on_signal
       end
+
+      Server.die_gracefully_on_signal
     end
   end
 end

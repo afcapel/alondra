@@ -24,7 +24,6 @@ gem "hiredis", ">= 0.3.1"
 gem "redis", ">= 2.2.1"
 
 gem 'uuidtools'
-gem 'thin'
 
 gem 'capybara'
 gem 'capybara-webkit', :git => 'git://github.com/thoughtbot/capybara-webkit.git'

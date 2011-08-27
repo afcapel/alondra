@@ -15,7 +15,6 @@ module Alondra
       EM::WebSocket.start(:host => '0.0.0.0', :port => Alondra.config.port) do |websocket|
 
         websocket.onopen do
-
           credentials = CredentialsParser.parse(websocket)
 
           Rails.logger.info "client connected. credentials: #{credentials}"

@@ -17,10 +17,12 @@ module Alondra
     def initialize
       Rails.logger.debug "Starting event queue"
 
-      if ENV['ALONDRA_SERVER'].present?
-        conn = context.bind(ZMQ::SUB, SOCKET_PATH, self)
-        conn.setsockopt ZMQ::SUBSCRIBE, '' # receive all
-      end
+      start if ENV['ALONDRA_SERVER'].present?
+    end
+
+    def start
+      conn = context.bind(ZMQ::SUB, SOCKET_PATH, self)
+      conn.setsockopt ZMQ::SUBSCRIBE, '' # receive all
     end
 
     def on_readable(socket, messages)
