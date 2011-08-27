@@ -42,13 +42,11 @@ module Alondra
 
       if EM.reactor_running?
         Rails.logger.info "Initializing server"
-        EventQueue.instance.start
         Server.run if ENV['ALONDRA_SERVER']
       else
         Thread.new do
           Rails.logger.info "Running EM reactor in new thread"
           EM.synchrony do
-            EventQueue.instance.start
             Server.run if ENV['ALONDRA_SERVER']
           end
         end

@@ -2,10 +2,6 @@ module Alondra
   class EventQueue
     include Singleton
 
-    def self.start
-      self.instance
-    end
-
     def self.push(event)
       instance.send(event)
     end
@@ -28,6 +24,7 @@ module Alondra
     def on_readable(socket, messages)
       messages.each do |received|
         begin
+          puts "received in queue #{received.copy_out_string}"
           parse received.copy_out_string
         rescue Exception => ex
           Rails.logger.error "Error raised while processing message"
@@ -50,7 +47,8 @@ module Alondra
     end
 
     def send(message)
-      EM.next_tick do
+      EM.schedule do
+        puts "sending to queue #{message.to_json}"
         push_socket.send_msg(message.to_json)
       end
     end

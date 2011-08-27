@@ -7,7 +7,7 @@ module Alondra
     extend self
 
     def run
-      EventQueue.start
+      EventQueue.instance.start
 
       puts "Server starting on port #{Alondra.config.port}"
       Rails.logger.error "Server starting on port #{Alondra.config.port}"
