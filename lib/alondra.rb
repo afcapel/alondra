@@ -54,6 +54,10 @@ module Alondra
 
       Server.die_gracefully_on_signal
     end
+
+    initializer "start event queue" do
+      EventQueue.push({}) # start push socket as soon as possible
+    end
   end
 end
 

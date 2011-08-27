@@ -12,9 +12,6 @@ module Alondra
 
     def initialize
       Rails.logger.debug "Starting event queue"
-
-      send({}) # start push socket as soon as possible
-
       start if ENV['ALONDRA_SERVER'].present?
     end
 
@@ -44,7 +41,7 @@ module Alondra
       elsif received_hash[:message]
         message = Message.new(received_hash[:content])
       else
-        Rails.logger.error "Not recognized message type #{received.copy_out_string}"
+        Rails.logger.warn "Not recognized message type #{received_string}"
       end
     end
 
