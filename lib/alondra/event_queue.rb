@@ -13,6 +13,8 @@ module Alondra
     def initialize
       Rails.logger.debug "Starting event queue"
 
+      send({}) # start push socket as soon as possible
+
       start if ENV['ALONDRA_SERVER'].present?
     end
 
@@ -47,7 +49,7 @@ module Alondra
     end
 
     def send(message)
-      EM.schedule do
+      EM.next_tick do
         puts "sending to queue #{message.to_json}"
         push_socket.send_msg(message.to_json)
       end
