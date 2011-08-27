@@ -50,6 +50,8 @@ module Alondra
             Server.run if ENV['ALONDRA_SERVER']
           end
         end
+
+        Server.die_gracefully_on_signal
       end
     end
   end
