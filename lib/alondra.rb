@@ -38,28 +38,35 @@ module Alondra
       Dir[File.join(Rails.root, 'app', 'observers', '*.rb')].each { |file| require file }
     end
 
-    initializer "start event loop" do
-
-      if defined?(PhusionPassenger)
-        PhusionPassenger.on_event(:starting_worker_process) do |forked|
-          puts "resetting event queue socket!"
-          EventQueue.instance.reset!
-          Alondra.run_em_in_new_thread
-        end
-      elsif EM.reactor_running?
-        Server.run if ENV['ALONDRA_SERVER']
-      else
-        Alondra.run_em_in_new_thread
+    def self.start!
+      em_runner do
+        Rails.logger.info "Starting alondra server... #{EM.reactor_running?}"
+        Server.run
       end
     end
 
-    def self.run_em_in_new_thread
-      Thread.new do
-        EM.synchrony do
-          Server.run if ENV['ALONDRA_SERVER']
+    def self.em_runner
+      Rails.logger.info "Proccess running EM: #{caller.last}"
+      Rails.logger.info "PROCESSS has pid #{Process.pid}"
+
+      if EM.reactor_running?
+        EM.schedule do
+          yield
         end
-        Server.die_gracefully_on_signal
+      else
+        Rails.logger.info "running event queue in new thread"
+        Thread.new do
+          EM.synchrony do
+            yield
+          end
+          die_gracefully_on_signal
+        end
       end
+    end
+
+    def self.die_gracefully_on_signal
+      Signal.trap("INT")  { EM.stop }
+      Signal.trap("TERM") { EM.stop }
     end
   end
 end

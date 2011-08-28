@@ -8,10 +8,10 @@ module Alondra
 
     SOCKET_PATH = 'ipc:///tmp/alondra'
 
-    attr_reader :received
-
     def initialize
-      start if ENV['ALONDRA_SERVER'].present?
+      Alondra.em_runner do
+        start if ENV['ALONDRA_SERVER'].present?
+      end
     end
 
     def start

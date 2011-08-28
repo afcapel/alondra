@@ -43,10 +43,5 @@ module Alondra
         Rails.logger.error error.stacktrace if error.respond_to? :stacktrace
       end
     end
-
-    def die_gracefully_on_signal
-      Signal.trap("INT")  { EM.stop }
-      Signal.trap("TERM") { EM.stop }
-    end
   end
 end
