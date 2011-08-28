@@ -11,11 +11,11 @@ module Alondra
     attr_reader :received
 
     def initialize
-      Rails.logger.debug "Starting event queue"
       start if ENV['ALONDRA_SERVER'].present?
     end
 
     def start
+      Rails.logger.info "Starting event queue"
       conn = context.bind(ZMQ::SUB, SOCKET_PATH, self)
       conn.setsockopt ZMQ::SUBSCRIBE, '' # receive all
     end
@@ -23,7 +23,7 @@ module Alondra
     def on_readable(socket, messages)
       messages.each do |received|
         begin
-          puts "received in queue #{received.copy_out_string}"
+          Rails.logger.debug "received in queue #{received.copy_out_string}"
           parse received.copy_out_string
         rescue Exception => ex
           Rails.logger.error "Error raised while processing message"
@@ -47,9 +47,13 @@ module Alondra
 
     def send(message)
       EM.next_tick do
-        puts "sending to queue #{message.to_json}"
         push_socket.send_msg(message.to_json)
       end
+    end
+
+    def reset!
+      @context     = nil
+      @push_socket = nil
     end
 
     private

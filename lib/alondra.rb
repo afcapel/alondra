@@ -40,23 +40,26 @@ module Alondra
 
     initializer "start event loop" do
 
-      if EM.reactor_running?
-        Rails.logger.info "Initializing server"
+      if defined?(PhusionPassenger)
+        PhusionPassenger.on_event(:starting_worker_process) do |forked|
+          puts "resetting event queue socket!"
+          EventQueue.instance.reset!
+          Alondra.run_em_in_new_thread
+        end
+      elsif EM.reactor_running?
         Server.run if ENV['ALONDRA_SERVER']
       else
-        Thread.new do
-          Rails.logger.info "Running EM reactor in new thread"
-          EM.synchrony do
-            Server.run if ENV['ALONDRA_SERVER']
-          end
-        end
+        Alondra.run_em_in_new_thread
       end
-
-      Server.die_gracefully_on_signal
     end
 
-    initializer "start event queue" do
-      EventQueue.push({}) # start push socket as soon as possible
+    def self.run_em_in_new_thread
+      Thread.new do
+        EM.synchrony do
+          Server.run if ENV['ALONDRA_SERVER']
+        end
+        Server.die_gracefully_on_signal
+      end
     end
   end
 end
