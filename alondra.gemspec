@@ -10,7 +10,9 @@ Gem::Specification.new do |s|
 
   # Dependencies
   s.add_dependency('daemons')
-  s.add_dependency('eventmachine', '>= 1.0.0.beta.4')
+  s.add_dependency('uuidtools')
+  s.add_dependency('rails', '>= 3.1.0.rc8')
+  s.add_dependency('eventmachine', '>= 1.0.0.beta.3')
   s.add_dependency('em-websocket')
   s.add_dependency('em-synchrony')
   s.add_dependency('em-http-request')
