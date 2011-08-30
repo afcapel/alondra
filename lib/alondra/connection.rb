@@ -1,5 +1,6 @@
-module Alondra
+require 'uuidtools'
 
+module Alondra
   module Connections
     extend self
 
