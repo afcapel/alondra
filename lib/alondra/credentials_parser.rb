@@ -1,3 +1,5 @@
+require 'cgi'
+
 module Alondra
   module CredentialsParser
     extend self
@@ -20,8 +22,9 @@ module Alondra
       begin
         cookies = cookie.split(';')
         session_key = Rails.application.config.session_options[:key]
+
         encoded_session = cookies.detect{|c| c.include?(session_key)}.gsub("#{session_key}=",'').strip
-        verifier.verify(encoded_session)
+        verifier.verify(CGI.unescape(encoded_session))
       rescue ActiveSupport::MessageVerifier::InvalidSignature => ex
         Rails.logger.error "invalid session cookie: #{cookie}"
         nil
