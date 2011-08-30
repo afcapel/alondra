@@ -3,7 +3,7 @@ module Alondra
     include Singleton
 
     def self.push(event)
-      instance.send(event)
+      instance.send_message(event)
     end
 
     SOCKET_PATH = 'ipc:///tmp/alondra'
@@ -45,7 +45,7 @@ module Alondra
       end
     end
 
-    def send(message)
+    def send_message(message)
       EM.next_tick do
         push_socket.send_msg(message.to_json)
       end
