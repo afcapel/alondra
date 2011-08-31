@@ -1,4 +1,5 @@
-#= require "vendor/json2"
+#= require "moz_websocket"
+#= require "vendor/jquery.json-2.2"
 #= require "vendor/swfobject"
 #= require "vendor/web_socket"
 //= provide "../swf"
@@ -21,7 +22,7 @@ class @AlondraClient
       command: 'subscribe'
       channel: channel
 
-    @socket.send JSON.stringify(subscription)
+    @socket.send $.toJSON(subscription)
 
   connect: ->
     @socket   = new WebSocket(@url)
@@ -41,7 +42,7 @@ class @AlondraClient
 
 
     @socket.onmessage = (message) =>
-      msg = JSON.parse(message.data)
+      msg = $.parseJSON(message.data)
       if msg.event
         this.process(msg)
       else
