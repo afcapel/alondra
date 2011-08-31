@@ -11,9 +11,9 @@ These are some things you can do with Alondra.
 Alondra allow browsers to subscribe to channels. Any Ruby proccess that load your rails environment can
 then push messages to those channels. To subscribe to a channel you can use the built in helper:
 
-<pre>
+```
   <%= alondra_client @chat %>
-</pre>
+```
 
 This will subscribe the browser to a channel named '/chats/:chat_id'. The alondra client will render any
 message pushed to that channel.
