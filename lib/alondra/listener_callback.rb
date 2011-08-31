@@ -1,5 +1,5 @@
 module Alondra
-  class ObserverCallback
+  class ListenerCallback
     attr_reader :event_type
     attr_reader :options
     attr_reader :proc

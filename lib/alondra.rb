@@ -9,15 +9,19 @@ require_relative 'alondra/event_router'
 require_relative 'alondra/event_queue'
 require_relative 'alondra/message_dispatcher'
 require_relative 'alondra/pushing'
-require_relative 'alondra/event_observer'
+require_relative 'alondra/event_listener'
 require_relative 'alondra/credentials_parser'
-require_relative 'alondra/observer_callback'
+require_relative 'alondra/listener_callback'
 require_relative 'alondra/push_controller'
 require_relative 'alondra/changes_callbacks'
 require_relative 'alondra/changes_push'
 require_relative 'alondra/server'
 
 module Alondra
+
+  ActiveRecord::Base.extend ChangesPush
+  ActionController::Base.send :include, Pushing
+
   class Alondra < Rails::Engine
 
     # Setting default configuration values
@@ -28,14 +32,9 @@ module Alondra
       Rails.application.config.session_store :cookie_store, httponly: false
     end
 
-    initializer "extending active record" do
-      Rails.logger.info "Extending active record"
-      ActiveRecord::Base.extend ChangesPush
-    end
-
-    initializer "load observers" do
-      Rails.logger.info "Loading event observers in #{File.join(Rails.root, 'app', 'observers', '*.rb')}"
-      Dir[File.join(Rails.root, 'app', 'observers', '*.rb')].each { |file| require file }
+    initializer "load listeners" do
+      Rails.logger.info "Loading event listeners in #{File.join(Rails.root, 'app', 'listeners', '*.rb')}"
+      Dir[File.join(Rails.root, 'app', 'listeners', '*.rb')].each { |file| require file }
     end
 
     def self.start!
@@ -46,8 +45,8 @@ module Alondra
     end
 
     def self.em_runner
-      Rails.logger.info "Proccess running EM: #{caller.last}"
-      Rails.logger.info "PROCESSS has pid #{Process.pid}"
+      Rails.logger.debug "Proccess running EM: #{caller.last}"
+      Rails.logger.debug "PROCESSS has pid #{Process.pid}"
 
       if EM.reactor_running?
         EM.schedule do

@@ -27,7 +27,7 @@ module Alondra
     end
 
     def push_event(type, record, options)
-      channels = channels_from(type, record, options)
+      channels = channel_names_from(type, record, options)
 
       channels.each do |channel|
         event = Event.new(:event => type, :resource => record, :channel => channel)
@@ -35,13 +35,13 @@ module Alondra
       end
     end
 
-    def channels_from(type, record, options)
+    def channel_names_from(type, record, options)
       case options[:to]
       when String then
         [options[:to]]
       when Symbol then
         records = record.send options[:to]
-        Channel.for(records)
+        Channel.names_for(records)
       else
         [Channel.default_name_for(record)]
       end

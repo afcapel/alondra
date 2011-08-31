@@ -2,7 +2,7 @@ require 'test_helper'
 
 module Alondra
 
-  class ChatObserver < EventObserver
+  class ChatObserver < EventListener
 
     def self.created_chats
       @created_chats ||= []
@@ -64,50 +64,50 @@ module Alondra
   end
 
 
-  class EventObserverTest < ActiveSupport::TestCase
+  class EventListenerTest < ActiveSupport::TestCase
 
-    test "can observe specifying a string as channel pattern" do
-      class TextPatternObserver < EventObserver
-        observe 'string pattern'
+    test "can listen to a specific channel providing a string pattern" do
+      class TextPatternObserver < EventListener
+        listen_to 'string pattern'
       end
 
-      assert  TextPatternObserver.observe?('string pattern')
-      assert  TextPatternObserver.observe?('string pattern and more')
-      assert !TextPatternObserver.observe?('other string pattern')
+      assert  TextPatternObserver.listen_to?('string pattern')
+      assert  TextPatternObserver.listen_to?('string pattern and more')
+      assert !TextPatternObserver.listen_to?('other string pattern')
     end
 
-    test "can observe specifying a regexp as channel pattern" do
-      class RegexpPatternObserver < EventObserver
-        observe /man$/
+    test "can listen to specific channel providing a regexp as pattern" do
+      class RegexpPatternObserver < EventListener
+        listen_to /man$/
       end
 
-      assert  RegexpPatternObserver.observe?('Superman')
-      assert !RegexpPatternObserver.observe?('Lex Luthor')
+      assert  RegexpPatternObserver.listen_to?('Superman')
+      assert !RegexpPatternObserver.listen_to?('Lex Luthor')
     end
 
     test "it has a default channel pattern" do
-      class DefaultPatternsObserver < EventObserver; end
+      class DefaultPatternsObserver < EventListener; end
 
-      assert  DefaultPatternsObserver.observe?('/default/patterns/')
-      assert  DefaultPatternsObserver.observe?('/default/patterns/1')
+      assert  DefaultPatternsObserver.listen_to?('/default/patterns/')
+      assert  DefaultPatternsObserver.listen_to?('/default/patterns/1')
 
-      assert !DefaultPatternsObserver.observe?('/default/other/')
-      assert !DefaultPatternsObserver.observe?('/other/patterns/')
+      assert !DefaultPatternsObserver.listen_to?('/default/other/')
+      assert !DefaultPatternsObserver.listen_to?('/other/patterns/')
     end
 
-    test "default channel pattern is ignored if explicit observe pattern is called" do
-      class OverwrittenDefaultPatternsObserver < EventObserver
-        observe '/others'
+    test "default channel pattern is ignored if explicit listen_to pattern is called" do
+      class OverwrittenDefaultPatternsObserver < EventListener
+        listen_to '/others'
       end
 
-      assert  OverwrittenDefaultPatternsObserver.observe?('/others')
-      assert  OverwrittenDefaultPatternsObserver.observe?('/others/1/')
-      assert !OverwrittenDefaultPatternsObserver.observe?('/overwritten/default/patterns')
+      assert  OverwrittenDefaultPatternsObserver.listen_to?('/others')
+      assert  OverwrittenDefaultPatternsObserver.listen_to?('/others/1/')
+      assert !OverwrittenDefaultPatternsObserver.listen_to?('/overwritten/default/patterns')
     end
 
 
     test 'receive created and destroyes events' do
-      ChatObserver.observe '/chats/'
+      ChatObserver.listen_to '/chats/'
 
       chat = Chat.create :name => 'Observed chat'
 
@@ -190,7 +190,7 @@ module Alondra
 
     test 'receive customs events' do
       event = Event.new :event => :custom, :resource => Chat.new, :channel => '/chats/'
-      EventRouter.process(event)
+      EventRouter.new.process(event)
 
       assert_equal ChatObserver.custom_events.last, event
     end

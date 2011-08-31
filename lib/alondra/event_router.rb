@@ -1,18 +1,17 @@
 module Alondra
   class EventRouter
-    include Singleton
 
-    def observers
-      @observers ||= []
+    def self.listeners
+      @listeners ||= []
     end
 
-    def self.process(event)
+    def process(event)
       event.channel.receive(event)
 
-      observing_classes = instance.observers.select { |ob| ob.observe?(event.channel_name) }
+      listening_classes = EventRouter.listeners.select { |ob| ob.listen_to?(event.channel_name) }
 
-      observing_classes.each do |observer_class|
-        new_instance = observer_class.new
+      listening_classes.each do |listening_class|
+        new_instance = listening_class.new
         new_instance.receive(event)
       end
     end

@@ -14,9 +14,13 @@ module Alondra
       end
 
       def for(records)
+        names_for(records).collect { |name| Channel[name] }
+      end
+
+      def names_for(records)
         case records
         when String
-          [Channel[records]]
+          [records]
         when Enumerable then
           records.collect { |r| Channel.default_name_for(r) }
         else

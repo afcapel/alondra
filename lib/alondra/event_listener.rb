@@ -1,5 +1,5 @@
 module Alondra
-  class EventObserver
+  class EventListener
     include Pushing
 
     attr_accessor :event
@@ -7,37 +7,37 @@ module Alondra
     attr_accessor :channel_name
 
     class << self
-      def observed_patterns
-        @observed_patterns ||= [default_observed_pattern]
+      def listened_patterns
+        @listened_patterns ||= [default_listened_pattern]
       end
 
-      def observe?(channel_name)
-        observed_patterns.any? { |p| p =~ channel_name }
+      def listen_to?(channel_name)
+        listened_patterns.any? { |p| p =~ channel_name }
       end
 
-      def observe(channel_name)
+      def listen_to(channel_name)
         unless @custom_pattern_provided
-          observed_patterns.clear
+          listened_patterns.clear
           @custom_pattern_provided = true
         end
 
         if Regexp === channel_name
-          observed_patterns << channel_name
+          listened_patterns << channel_name
         else
           escaped_pattern = Regexp.escape(channel_name)
-          observed_patterns << Regexp.new("^#{escaped_pattern}")
+          listened_patterns << Regexp.new("^#{escaped_pattern}")
         end
       end
 
       def on(event_type, options = {}, &block)
-        callbacks << ObserverCallback.new(event_type, options, block)
+        callbacks << ListenerCallback.new(event_type, options, block)
       end
 
       def callbacks
         @callbacks ||= []
       end
 
-      def default_observed_pattern
+      def default_listened_pattern
         word = self.name.demodulize
         word.gsub!(/Observer$/, '')
         word.gsub!(/::/, '/')
@@ -48,7 +48,7 @@ module Alondra
       end
 
       def inherited(subclass)
-        EventRouter.instance.observers << subclass
+        EventRouter.listeners << subclass
       end
     end
 

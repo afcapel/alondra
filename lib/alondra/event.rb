@@ -32,13 +32,17 @@ module Alondra
       EventQueue.push self
     end
 
-    def to_json
-      ActiveSupport::JSON.encode({
+    def as_json
+      {
         :event         => type,
         :resource_type => resource_type,
         :resource      => resource.as_json,
         :channel       => channel_name
-        })
+      }
+    end
+
+    def to_json
+      ActiveSupport::JSON.encode(as_json)
     end
 
     private

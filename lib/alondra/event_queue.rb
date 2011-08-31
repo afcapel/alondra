@@ -6,7 +6,7 @@ module Alondra
       instance.send_message(event)
     end
 
-    SOCKET_PATH = 'ipc:///tmp/alondra'
+    SOCKET_PATH = 'ipc:///tmp/alondra.ipc'
 
     def initialize
       Alondra.em_runner do
@@ -37,7 +37,7 @@ module Alondra
       received_hash = ActiveSupport::JSON.decode(received_string).symbolize_keys
       if received_hash[:event]
         event = Event.new(received_hash)
-        EventRouter.process(event)
+        event_router.process(event)
       elsif received_hash[:message]
         message = Message.new(received_hash[:content])
       else
@@ -46,8 +46,12 @@ module Alondra
     end
 
     def send_message(message)
-      EM.next_tick do
-        push_socket.send_msg(message.to_json)
+      EM.schedule do
+        begin
+          push_socket.send_msg(message.to_json)
+        rescue Exception => ex
+          Rails.logger.error "Exception while sending message to event quete: #{ex.message}"
+        end
       end
     end
 
@@ -57,6 +61,10 @@ module Alondra
     end
 
     private
+
+    def event_router
+      @event_router ||= EventRouter.new
+    end
 
     def push_socket
       @push_socket ||= context.connect(ZMQ::PUB, SOCKET_PATH)

@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby
+# Set up gems listed in the Gemfile.
+ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../Gemfile', File.dirname(__FILE__))
+
+require 'rubygems'
+require 'bundler/setup' if File.exists?(ENV['BUNDLE_GEMFILE'])
+require 'daemons'
+
+
+log_dir = File.expand_path('../log', File.dirname(__FILE__))
+
+options = {
+  :app_name   => 'alondra',
+  :dir_mode   => :script,
+  :dir        => 'log',
+  :log_dir    => log_dir
+}
+
+Daemons.run_proc 'alondra', options do
+
+  ENV["ALONDRA_SERVER"] = 'true'
+  require_relative File.join('..', 'config', 'environment')
+
+  log_path = File.join(log_path, 'alondra.log')
+  Rails.logger =  ActiveSupport::BufferedLogger.new(log_path)
+
+  Alondra::Alondra.start!
+
+  Rails.logger.info "Started alondra server... #{EM.reactor_running?}"
+
+  EM.reactor_thread.join
+  Rails.logger.info 'Alondra server terminated'
+end
