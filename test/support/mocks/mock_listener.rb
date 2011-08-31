@@ -1,4 +1,4 @@
-class MockObserver
+class MockListener
   def received_events
     @received_events ||= []
   end

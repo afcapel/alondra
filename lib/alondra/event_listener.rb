@@ -39,7 +39,7 @@ module Alondra
 
       def default_listened_pattern
         word = self.name.demodulize
-        word.gsub!(/Observer$/, '')
+        word.gsub!(/Listener$/, '')
         word.gsub!(/::/, '/')
         word.gsub!(/([A-Z]+)([A-Z][a-z])/,'\1\/\2')
         word.gsub!(/([a-z\d])([A-Z])/,'\1/\2')
