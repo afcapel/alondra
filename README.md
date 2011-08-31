@@ -1,6 +1,7 @@
 # Alondra
 
-Alondra is a push server and framework that adds real time capabilities to your rails applications.
+Alondra is a push server and framework that adds real time capabilities to
+your rails applications.
 
 ## What can I do with Alondra?
 
@@ -8,32 +9,34 @@ These are some things you can do with Alondra.
 
 ### Subscribe clients to channels
 
-Alondra allow browsers to subscribe to channels. Any Ruby proccess that load your rails environment can
-then push messages to those channels. To subscribe to a channel you can use the built in helper:
+Alondra allow browsers to subscribe to channels. Any Ruby proccess that load
+your rails environment can then push messages to those channels. To subscribe
+to a channel you can use the built in helper:
 
 ```
   <%= alondra_client @chat %>
 ```
 
-This will subscribe the browser to a channel named '/chats/:chat_id'. The alondra client will render any
-message pushed to that channel.
+This will subscribe the browser to a channel named '/chats/:chat_id'. The
+Alondra client will render any message pushed to that channel.
 
 ### Sending push notifications
 
-Since Alondra is all Ruby and integrates with your Rails environment, you can your rails models and views.
-For example, sending a push notifications from your controller action is as simple as this:
+Since Alondra is all Ruby and integrates with your Rails environment, you can
+your rails models and views. For example, sending a push notifications from
+your controller action is as simple as this:
 
 ```ruby
   push '/messages/create', :to => @chat
 ```
 
-You can also listen to :unsubscribe, :created, :updated, :destoyed or any
-custom event in the observed channels.
+This will render the '/messages/create' view and send the results to all
+clients subscribed to the chat channel
 
 ### Listening to events
 
-Alondra come bundled with an EventListener class that allows you to react to events, such as when a client
-subscribe to a channel.
+Alondra come bundled with an EventListener class that allows you to react to
+events, such as when a client subscribe to a channel.
 
 ```ruby
   # A chat listener will by default listen to events
@@ -58,10 +61,13 @@ subscribe to a channel.
   end
 ```
 
+You can also listen to :unsubscribe, :created, :updated, :destoyed or any
+custom event in the observed channels.
+
 ### Push record changes to the client
 
-Some times you are just interested in pushing record updates to subscribed clients.
-This is as annotating your model:
+Some times you are just interested in pushing record updates to subscribed
+clients. This is as simple as annotating your model:
 
 ```ruby
   class Presence < ActiveRecord::Base
@@ -76,9 +82,11 @@ This is as annotating your model:
 This will push an event (:created, :upated or :destroyed)  to the chat channel
 each time a Message instance changes.
 
+
 ## Example application
 
-You can check the [example application](http://github.com/afcapel/alondra-example) to see how some of the features are used.
+You can check the [example application](http://github.com/afcapel/alondra-example)
+to see how some of the features are used.
 
 ## Installation
 
@@ -90,7 +98,7 @@ you are using Homebrew, just type
   brew install zeromq
 </pre>
 
-When ZeroMQ is installed, just add the alondra gem to your Gemfile.
+When ZeroMQ is installed, add the Alondra gem to your Gemfile.
 
 <pre>
   gem "alondra"
