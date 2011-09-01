@@ -2,11 +2,6 @@ module Alondra
   class Message
     attr_reader :content
 
-    def self.from_json(message_hash)
-      message_hash = ActiveSupport::JSON.decode(s).symbolize_keys
-      self.new(message_hash[:content])
-    end
-
     def initialize(content)
       @content = content
     end
