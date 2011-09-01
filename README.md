@@ -7,7 +7,7 @@ your rails applications.
 
 ### Subscribe clients to channels
 
-Alondra allow browsers to subscribe to channels. Any Ruby proccess that load
+Alondra allows browsers to subscribe to channels. Any Ruby process that load
 your rails environment will be able to push messages to those channels.
 
 To subscribe to a channel you can use the built in helper:
@@ -16,11 +16,11 @@ To subscribe to a channel you can use the built in helper:
   <%= alondra_client @chat %>
 ```
 
-Alondra uses conventions to map records and clases to channel names. The last
+Alondra uses conventions to map records and classes to channel names. The last
 example will subscribe the browser to a channel named '/chats/:chat_id'. Then,
 the Alondra client will render any message pushed to that channel.
 
-If you don't want to use alondra conventions, you can allways provide your own
+If you don't want to use Alondra conventions, you can always provide your own
 channel names:
 
 ```
@@ -49,7 +49,7 @@ a push notifications from your controller action is as simple as this:
 This will render the '/messages/create' view and send the results to all
 clients subscribed to the chat channel.
 
-You can send push notifications from any processes that loads your rails
+You can send push notifications from any process that loads your rails
 environment and from any class that includes the Alondra::Pushing module.
 When rendering a push message the local context (that is, the instance
 variables of the caller object) will be available in the view.
@@ -64,17 +64,17 @@ events such as when a client subscribes to a channel.
   # sent to any channel whose name begins with '/chat'
   class ChatListener < Alondra::EventListener
 
-    # If you want to listen to other channels than the default ones
-    # you can specify another patterns with the listen_to method, like
+    # If you want to listen to other channels than the default one
+    # you can specify another patterns with the listen_to method
     #
     # listen_to  /tion$/
     #
-    # That would make your listener to receive event to any channel whose
-    # name ends in 'ion'
+    # That would make your listener to receive event to any channel that
+    # match the /ion$/ regexp
 
 
     # This will be fire any time a client subscribe to
-    # any of the observed channels
+    # channel named /chats/:chat_id
     on :subscribed, :to => :member do
 
       # If you use Cookie Based Session Store,
@@ -87,7 +87,7 @@ events such as when a client subscribes to a channel.
   end
 ```
 
-You can also listen to :unsubscribe, :created, :updated, :destoyed or any
+You can also listen to :unsubscribe, :created, :updated, :destroyed or any
 custom event in the observed channels.
 
 ### Push record changes to the client
@@ -142,7 +142,7 @@ to see how some of the features are used.
 ## Installation
 
 Currently Alondra depends on Rails 3.1 and Ruby 1.9. It also uses ZeroMQ for
-interprocess communication, so you you need to install the library first. If
+interprocess communication, so you need to install the library first. If
 you are using Homebrew on Mac OS X, just type
 
 <pre>
