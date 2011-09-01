@@ -66,6 +66,15 @@ module Alondra
 
       connection.channels.delete self
       connections.delete connection
+
+      event_hash =  { :event    => :unsubscribed,
+                      :resource => connection.session,
+                      :resource_type => connection.session.class.name,
+                      :channel  => name }
+
+
+      event = Event.new event_hash, connection
+      event.fire!
     end
 
     def receive(event_or_message)
