@@ -5,20 +5,27 @@ your rails applications.
 
 ## What can I do with Alondra?
 
-These are some things you can do with Alondra.
-
 ### Subscribe clients to channels
 
 Alondra allow browsers to subscribe to channels. Any Ruby proccess that load
-your rails environment can then push messages to those channels. To subscribe
-to a channel you can use the built in helper:
+your rails environment can then push messages to those channels.
+
+To subscribe to a channel you can use the built in helper:
 
 ```
   <%= alondra_client @chat %>
 ```
 
-This will subscribe the browser to a channel named '/chats/:chat_id'. The
-Alondra client will render any message pushed to that channel.
+Alondra uses conventions to map records and clases to channel names. The last
+example will subscribe the browser to a channel named '/chats/:chat_id'. Then,
+the Alondra client will render any message pushed to that channel.
+
+I you don't want to use alondra conventions, you can allways provide your own
+channel names:
+
+```
+  <%= alondra_client ['my custom channel', 'another channel'] %>
+```
 
 ### Sending push notifications
 
@@ -31,7 +38,12 @@ your controller action is as simple as this:
 ```
 
 This will render the '/messages/create' view and send the results to all
-clients subscribed to the chat channel
+clients subscribed to the chat channel.
+
+You can send push notifications from any processes that loads your rails
+environment and from any class that includes the Alondra::Pushing module.
+When rendering a push message the local environment (that is the instance
+variables of the calling object) will be available in the view.
 
 ### Listening to events
 
@@ -55,7 +67,9 @@ events, such as when a client subscribe to a channel.
     # This will be fire any time a client subscribe to
     # any of the observed channels
     on :subscribed, :to => :member do
-      @user = user
+      @user = resource
+
+      # You can push notifications from listeners
       push '/users/user', :to => channel_name
     end
   end
@@ -82,6 +96,31 @@ clients. This is as simple as annotating your model:
 This will push an event (:created, :upated or :destroyed)  to the chat channel
 each time a Message instance changes.
 
+In the client you can listen to these events using the javacript API:
+
+```javascript
+
+  var alondraClient = new AlondraClient('localhost', 12345, ['/chat_rooms/1']);
+
+  // render user name when presence is created
+
+  $(alondraClient).bind("created.Presence", function(event, resource){
+    if( $('#user_'+resource.user_id).length == 0 ){
+      $('#users').append("<li id='user_" + resource.user_id + "'>" + resource.username + "</li>");
+    }
+  });
+
+  // remove user name when presence is destroyed
+
+  $(alondraClient).bind("destroyed.Presence", function(event, resource){
+    $('#user_'+resource.user_id).remove();
+  });
+
+```
+
+This technique is also especially useful if you use something like Backbone.js
+to render your app frontend.
+
 
 ## Example application
 
@@ -92,7 +131,7 @@ to see how some of the features are used.
 
 Currently Alondra depends on Rails 3.1 and Ruby 1.9. It also uses ZeroMQ for
 interprocess communication, so you you need to install the library first. If
-you are using Homebrew, just type
+you are using Homebrew on Mac OS X, just type
 
 <pre>
   brew install zeromq
