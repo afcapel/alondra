@@ -5,7 +5,7 @@ module Alondra
   class ConfigurationTest < ActiveSupport::TestCase
 
     test "it has default values" do
-      assert_equal 12345, Alondra.config.port
+      assert_equal 12346, Alondra.config.port
     end
 
     test "it allows to override default values" do

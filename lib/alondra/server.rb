@@ -9,8 +9,7 @@ module Alondra
     def run
       EventQueue.instance.start
 
-      puts "Server starting on port #{Alondra.config.port}"
-      Rails.logger.error "Server starting on port #{Alondra.config.port}"
+      Rails.logger.info "Server starting on port #{Alondra.config.port}"
 
       EM::WebSocket.start(:host => '0.0.0.0', :port => Alondra.config.port) do |websocket|
 
