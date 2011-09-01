@@ -14,7 +14,7 @@ module Alondra
     end
 
     def render_push(options, channels)
-      message_string = render_to_string(options)
+      message_string = render_to_string(*options)
       msg = Message.new(message_string)
       msg.send_to channels
     end
