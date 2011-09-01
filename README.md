@@ -7,8 +7,8 @@ your rails applications.
 
 ### Subscribe clients to channels
 
-Alondra allow browsers to subscribe to channels. Any Ruby proccess that load
-your rails environment will be able to push messages to those channels.
+Alondra allows browsers to subscribe to channels. Any Ruby process that loads
+your Rails environment will be able to push messages to those channels.
 
 To subscribe to a channel you can use the built in helper:
 
@@ -16,11 +16,11 @@ To subscribe to a channel you can use the built in helper:
   <%= alondra_client @chat %>
 ```
 
-Alondra uses conventions to map records and clases to channel names. The last
+Alondra uses conventions to map records and classes to channel names. The last
 example will subscribe the browser to a channel named '/chats/:chat_id'. Then,
 the Alondra client will render any message pushed to that channel.
 
-If you don't want to use alondra conventions, you can allways provide your own
+If you don't want to use Alondra conventions, you can allways provide your own
 channel names:
 
 ```
@@ -30,8 +30,8 @@ channel names:
 ### Sending push notifications
 
 Since Alondra is all Ruby and integrates with your Rails environment, you can
-use your rails models and views to render push messages. For example, sending
-a push notifications from your controller action is as simple as this:
+use your Rails models and views to render push messages. For example, sending
+a push notification from your controller action is as simple as this:
 
 ```ruby
   def create
@@ -49,14 +49,14 @@ a push notifications from your controller action is as simple as this:
 This will render the '/messages/create' view and send the results to all
 clients subscribed to the chat channel.
 
-You can send push notifications from any processes that loads your rails
+You can send push notifications from any process that loads your Rails
 environment and from any class that includes the Alondra::Pushing module.
 When rendering a push message the local context (that is, the instance
 variables of the caller object) will be available in the view.
 
 ### Listening to events
 
-Alondra come bundled with an EventListener class that allows you to react to
+Alondra comes bundled with an EventListener class that allows you to react to
 events such as when a client subscribes to a channel.
 
 ```ruby
@@ -65,20 +65,20 @@ events such as when a client subscribes to a channel.
   class ChatListener < Alondra::EventListener
 
     # If you want to listen to other channels than the default ones
-    # you can specify another patterns with the listen_to method, like
+    # you can specify other patterns with the listen_to method, like
     #
     # listen_to  /tion$/
     #
-    # That would make your listener to receive event to any channel whose
+    # That would make your listener receive events from any channel whose
     # name ends in 'ion'
 
 
-    # This will be fire any time a client subscribe to
+    # This will be fired any time a client subscribes to
     # any of the observed channels
     on :subscribed, :to => :member do
 
       # If you use Cookie Based Session Store,
-      # you can access the rails session from the listener
+      # you can access the Rails session from the listener
       @user = User.find(session[:user_id])
 
       # Push notifications from listener
@@ -162,12 +162,12 @@ In the shell execute the generator.
   $ rails g alondra install
 </pre>
 
-To run the alondra server, just call the generated script
+To run the Alondra server, just call the generated script
 
 <pre>
   $ script/alondra start
 </pre>
 
-In development mode you can also run the alondra server in its own thread.
+In development mode you can also run the Alondra server in its own thread.
 See the [initializer in the example application](https://github.com/afcapel/alondra-example/blob/master/config/initializers/alondra_server.rb)
 for how to do it.
