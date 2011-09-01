@@ -52,11 +52,15 @@ module Alondra
       end
     end
 
+    def session
+      @connection.session
+    end
 
     def receive(event)
-      self.event        = event
-      self.resource     = event.resource
-      self.channel_name = event.channel_name
+      @event        = event
+      @resource     = event.resource
+      @channel_name = event.channel_name
+      @connection   = event.connection
 
       matching_callbacks = self.class.callbacks.find_all { |c| c.matches?(event) }
       matching_callbacks.each do |callback|

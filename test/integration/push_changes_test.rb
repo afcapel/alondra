@@ -24,22 +24,16 @@ module Alondra
 
       visit chat_path
 
-      wait_until(20) do
-        Channel[chat_path].users.include?(user)
+      wait_until(5) do
+        page.has_content? 'A chat about nothing'
       end
-
-      assert page.has_content? 'A chat about nothing'
 
       chat.update_attributes! :name => 'A chat about everything'
 
-      wait_until(10) do
+      sleep(0.1)
+
+      wait_until(5) do
         page.has_content? 'A chat about everything'
-      end
-
-      visit chats_path
-
-      wait_until(10) do
-        !Channel[chat_path].users.include?(user)
       end
     end
   end

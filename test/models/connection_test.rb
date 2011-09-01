@@ -8,11 +8,11 @@ module Alondra
       assert MockConnection.new.uuid.present?
     end
 
-    test "can find user if credentials are provided" do
-      user = Factory.create :user
-      connection = MockConnection.new(:user_id => user.id)
+    test "can find if there is a session" do
+      session = {:user_id => 10}
+      connection = MockConnection.new(session)
 
-      assert_equal user, connection.user
+      assert_equal session, connection.session
     end
   end
 end

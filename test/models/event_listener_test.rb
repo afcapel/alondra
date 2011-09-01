@@ -8,8 +8,8 @@ module Alondra
       @created_chats ||= []
     end
 
-    def self.subscribed_clients
-      @subscribed_clients ||= []
+    def self.subscribed_user_ids
+      @subscribed_user_ids ||= []
     end
 
     def self.subscribed_to_collection
@@ -34,27 +34,27 @@ module Alondra
     end
 
     on :subscribed do |event|
-      ChatListener.subscribed_clients << event.resource
+      ChatListener.subscribed_user_ids << session[:user_id]
     end
 
     on :unsubscribed do |event|
-      ChatListener.subscribed_clients.delete(event.resource)
+      ChatListener.subscribed_user_ids.delete(session[:user_id])
     end
 
     on :subscribed, :to => :collection do |event|
-      ChatListener.subscribed_to_collection << event.resource
+      ChatListener.subscribed_to_collection << session[:user_id]
     end
 
     on :unsubscribed, :to => :collection do |event|
-      ChatListener.subscribed_to_collection.delete(event.resource)
+      ChatListener.subscribed_to_collection.delete(session[:user_id])
     end
 
     on :subscribed, :to => :member do |event|
-      ChatListener.subscribed_to_member << event.resource
+      ChatListener.subscribed_to_member << session[:user_id]
     end
 
     on :unsubscribed, :to => :member do |event|
-      ChatListener.subscribed_to_member.delete(event.resource)
+      ChatListener.subscribed_to_member.delete(session[:user_id])
     end
 
     on :custom do |event|
@@ -123,69 +123,70 @@ module Alondra
     end
 
     test 'react to subscribed and unsubscribed events' do
-      user = Factory.create :user
-      connection = MockConnection.new(:id => user.id)
+      session = {:user_id => 28 }
+      connection = MockConnection.new(session)
 
-      assert !ChatListener.subscribed_clients.include?(user)
+      assert !ChatListener.subscribed_user_ids.include?(28)
 
       Command.new(connection, :command => 'subscribe', :channel => '/chats/').execute!
 
-      EM.reactor_thread.join(2.5)
+      sleep(0.1)
 
-      assert ChatListener.subscribed_clients.include?(user)
+      assert ChatListener.subscribed_user_ids.include?(28)
 
       Command.new(connection, :command => 'unsubscribe', :channel => '/chats/').execute!
 
-      EM.reactor_thread.join(2.5)
+      sleep(0.1)
 
-      assert !ChatListener.subscribed_clients.include?(user)
+      assert !ChatListener.subscribed_user_ids.include?(28)
     end
 
     test 'react to subscribed and unsubscribed events on collection' do
-      user = Factory.create :user
-      connection = MockConnection.new(:id => user.id)
+      session = {:user_id => 29 }
+      connection = MockConnection.new(session)
 
-      assert !ChatListener.subscribed_to_collection.include?(user)
-      assert !ChatListener.subscribed_to_member.include?(user)
+      assert !ChatListener.subscribed_to_collection.include?(29)
+      assert !ChatListener.subscribed_to_member.include?(29)
 
       Command.new(connection, :command => 'subscribe', :channel => '/chats/').execute!
 
       sleep(0.1)
 
-      assert ChatListener.subscribed_to_collection.include?(user)
-      assert !ChatListener.subscribed_to_member.include?(user)
+      assert ChatListener.subscribed_to_collection.include?(29)
+      assert !ChatListener.subscribed_to_member.include?(29)
 
       Command.new(connection, :command => 'unsubscribe', :channel => '/chats/').execute!
 
       sleep(0.1)
 
-      assert !ChatListener.subscribed_to_collection.include?(user)
-      assert !ChatListener.subscribed_to_member.include?(user)
+      assert !ChatListener.subscribed_to_collection.include?(29)
+      assert !ChatListener.subscribed_to_member.include?(29)
     end
 
     test 'react to subscribed and unsubscribed events on member' do
-      user = Factory.create :user
-      connection = MockConnection.new(:id => user.id)
+      session = {:user_id => 30 }
+      connection = MockConnection.new(session)
+
       chat = Factory.create :chat
 
       chat_channel = "/chats/#{chat.id}"
 
-      assert !ChatListener.subscribed_to_collection.include?(user)
-      assert !ChatListener.subscribed_to_member.include?(user)
+      assert !ChatListener.subscribed_to_collection.include?(30)
+      assert !ChatListener.subscribed_to_member.include?(30)
 
       Command.new(connection, :command => 'subscribe', :channel => chat_channel).execute!
 
       sleep(0.1)
 
-      assert !ChatListener.subscribed_to_collection.include?(user)
-      assert ChatListener.subscribed_to_member.include?(user)
+      assert !ChatListener.subscribed_to_collection.include?(30)
+      assert ChatListener.subscribed_to_member.include?(30)
 
       Command.new(connection, :command => 'unsubscribe', :channel => chat_channel).execute!
 
       sleep(0.1)
 
-      assert !ChatListener.subscribed_to_collection.include?(user)
-      assert !ChatListener.subscribed_to_member.include?(user)
+      assert !ChatListener.subscribed_to_collection.include?(30)
+      assert !ChatListener.subscribed_to_member.include?(30)
     end
 
     test 'receive customs events' do

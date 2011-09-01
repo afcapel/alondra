@@ -24,12 +24,11 @@ module Alondra
   class Connection
     attr_reader :uuid
     attr_reader :websocket
-    attr_reader :credentials
+    attr_reader :session
     attr_reader :channels
 
-    def initialize(websocket, credentials)
-      credentials ||= {}
-      @credentials = credentials.stringify_keys
+    def initialize(websocket, session = {})
+      @session = session.symbolize_keys
       @websocket   = websocket
       @uuid = UUIDTools::UUID.random_create
 
@@ -38,10 +37,6 @@ module Alondra
 
     def channels
       @channels ||= []
-    end
-
-    def user
-      User.where(credentials_to_param).first if credentials_to_param
     end
 
     def receive(event_or_message)
@@ -53,20 +48,5 @@ module Alondra
       channels.each { |c| c.unsubscribe self }
       Connections.delete self.websocket
     end
-
-    private
-
-    def credentials_to_param
-      return {:id => warden_user_id }        if warden_user_id
-      return {:id => credentials['user_id']} if credentials['user_id']
-      return {:id => credentials['id']}      if credentials['id']
-
-      nil
-    end
-
-    def warden_user_id
-      credentials['warden.user.user.key'] && credentials['warden.user.user.key'][1].first
-    end
-
   end
 end

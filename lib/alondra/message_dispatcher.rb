@@ -14,7 +14,8 @@ module Alondra
       if msg[:command]
         Command.new(connection, msg).execute!
       elsif msg[:event]
-        EventQueue.push(Event.new(msg))
+        event = Event.new(msg, connection)
+        EventQueue.push(event)
       end
     end
   end

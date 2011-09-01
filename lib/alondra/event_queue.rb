@@ -35,14 +35,18 @@ module Alondra
 
     def parse(received_string)
       received_hash = ActiveSupport::JSON.decode(received_string).symbolize_keys
+
       if received_hash[:event]
-        event = Event.new(received_hash)
-        event_router.process(event)
+        receive(Event.new(received_hash))
       elsif received_hash[:message]
         message = Message.new(received_hash[:content])
       else
         Rails.logger.warn "Not recognized message type #{received_string}"
       end
+    end
+
+    def receive(event)
+      event_router.process(event)
     end
 
     def send_message(message)

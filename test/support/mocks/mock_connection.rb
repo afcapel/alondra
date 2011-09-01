@@ -1,8 +1,8 @@
 module Alondra
   class MockConnection < Connection
 
-    def initialize(credentials = {})
-      super UUIDTools::UUID.random_create, credentials
+    def initialize(session = {})
+      super UUIDTools::UUID.random_create, session
     end
 
     def send(message)

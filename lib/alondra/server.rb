@@ -15,10 +15,10 @@ module Alondra
       EM::WebSocket.start(:host => '0.0.0.0', :port => Alondra.config.port) do |websocket|
 
         websocket.onopen do
-          credentials = CredentialsParser.parse(websocket)
+          session = SessionParser.parse(websocket)
 
-          Rails.logger.info "client connected. credentials: #{credentials}"
-          Connection.new(websocket, credentials)
+          Rails.logger.info "client connected."
+          Connection.new(websocket, session)
         end
 
         websocket.onclose do

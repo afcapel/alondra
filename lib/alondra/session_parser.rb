@@ -1,7 +1,7 @@
 require 'cgi'
 
 module Alondra
-  module CredentialsParser
+  module SessionParser
     extend self
 
     def verifier
@@ -11,10 +11,10 @@ module Alondra
     def parse(websocket)
       if websocket.request['query']['token'].present?
         token = websocket.request['query']['token']
-        CredentialsParser.parse_token(token)
+        SessionParser.parse_token(token)
       else
         cookie = websocket.request['cookie'] || websocket.request['Cookie']
-        CredentialsParser.parse_cookie(cookie)
+        SessionParser.parse_cookie(cookie)
       end
     end
 
@@ -27,7 +27,7 @@ module Alondra
         verifier.verify(CGI.unescape(encoded_session))
       rescue ActiveSupport::MessageVerifier::InvalidSignature => ex
         Rails.logger.error "invalid session cookie: #{cookie}"
-        nil
+        {}
       end
     end
 
@@ -37,7 +37,7 @@ module Alondra
         ActiveSupport::JSON.decode(decoded_token)
       rescue ActiveSupport::MessageVerifier::InvalidSignature => ex
         Rails.logger.error "invalid session token: #{token}"
-        nil
+        {}
       end
     end
 

@@ -4,9 +4,11 @@ module Alondra
     attr_reader :type
     attr_reader :resource
     attr_reader :resource_type
+    attr_reader :connection
 
-    def initialize(event_hash)
-      @type          = event_hash[:event].to_sym
+    def initialize(event_hash, connection = nil)
+      @connection = connection
+      @type       = event_hash[:event].to_sym
 
       if Hash === event_hash[:resource]
         @resource = fetch_resource(event_hash[:resource_type], event_hash[:resource])
@@ -29,7 +31,11 @@ module Alondra
     end
 
     def fire!
-      EventQueue.push self
+      if connection
+        EventQueue.instance.receive self
+      else
+        EventQueue.push self
+      end
     end
 
     def as_json

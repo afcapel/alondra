@@ -1,6 +1,7 @@
 module Alondra
   class Command
     attr_reader :name
+    attr_reader :connection
     attr_reader :channel_name
 
     def initialize(connection, command_hash)
@@ -26,12 +27,12 @@ module Alondra
     end
 
     def fire_event(event_type)
-      resource = @connection.user || @connection.credentials
+      event_hash = {:event         => event_type,
+                    :resource      => @connection.session,
+                    :resource_type => @connection.session.class.name,
+                    :channel       => @channel_name}
 
-      event = Event.new :event         => event_type,
-                        :resource      => resource,
-                        :resource_type => resource.class.name,
-                        :channel       => @channel_name
+      event = Event.new event_hash, connection
       event.fire!
     end
   end
