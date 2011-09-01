@@ -24,6 +24,10 @@ module Alondra
       end
     end
 
+    def to_proc
+      proc
+    end
+
     private
 
     def member_channel?(channel_name)

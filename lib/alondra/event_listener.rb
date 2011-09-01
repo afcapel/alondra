@@ -62,10 +62,10 @@ module Alondra
       @channel_name = event.channel_name
       @connection   = event.connection
 
-      matching_callbacks = self.class.callbacks.find_all { |c| c.matches?(event) }
-      matching_callbacks.each do |callback|
+      self.class.callbacks.each do |callback|
+        next unless callback.matches?(event)
         begin
-          self.instance_exec(event, &callback.proc)
+          instance_exec(event, &callback)
         rescue Exception => ex
           Rails.logger.error 'Error while processing event listener callback'
           Rails.logger.error ex.message
