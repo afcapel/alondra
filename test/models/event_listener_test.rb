@@ -61,6 +61,10 @@ module Alondra
       ChatListener.custom_events << event
     end
 
+    on :boom do |event|
+      event.boom!
+    end
+
   end
 
 
@@ -190,6 +194,16 @@ module Alondra
     end
 
     test 'receive customs events' do
+      event = Event.new :event => :custom, :resource => Chat.new, :channel => '/chats/'
+      EventRouter.new.process(event)
+
+      assert_equal ChatListener.custom_events.last, event
+    end
+
+    test 'capture exceptions launched in event listener' do
+      boom = BogusEvent.new :event => :boom, :resource => Chat.new, :channel => '/chats/'
+      EventRouter.new.process(boom)
+
       event = Event.new :event => :custom, :resource => Chat.new, :channel => '/chats/'
       EventRouter.new.process(event)
 

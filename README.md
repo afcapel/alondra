@@ -52,7 +52,7 @@ events, such as when a client subscribe to a channel.
 
 ```ruby
   # A chat listener will by default listen to events
-  # sent to channel whose name begins with '/chat'
+  # sent to any channel whose name begins with '/chat'
   class ChatListener < Alondra::EventListener
 
     # If you want to listen to other channels than the default ones
@@ -67,9 +67,12 @@ events, such as when a client subscribe to a channel.
     # This will be fire any time a client subscribe to
     # any of the observed channels
     on :subscribed, :to => :member do
-      @user = resource
 
-      # You can push notifications from listeners
+      # If you use Cookie Based Session Store,
+      # you can access the rails session from the listener
+      @user = User.find(session[:user_id])
+
+      # Push notifications from listener
       push '/users/user', :to => channel_name
     end
   end
@@ -118,7 +121,7 @@ In the client you can listen to these events using the javacript API:
 
 ```
 
-This technique is also especially useful if you use something like Backbone.js
+This technique is especially useful if you use something like Backbone.js
 to render your app frontend.
 
 

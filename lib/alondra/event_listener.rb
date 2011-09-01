@@ -64,7 +64,13 @@ module Alondra
 
       matching_callbacks = self.class.callbacks.find_all { |c| c.matches?(event) }
       matching_callbacks.each do |callback|
-        self.instance_exec(event, &callback.proc)
+        begin
+          self.instance_exec(event, &callback.proc)
+        rescue Exception => ex
+          Rails.logger.error 'Error while processing event listener callback'
+          Rails.logger.error ex.message
+          Rails.logger.error ex.stacktrace if ex.respond_to? :stacktrace
+        end
       end
     end
   end
