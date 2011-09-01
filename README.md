@@ -20,7 +20,7 @@ Alondra uses conventions to map records and classes to channel names. The last
 example will subscribe the browser to a channel named '/chats/:chat_id'. Then,
 the Alondra client will render any message pushed to that channel.
 
-If you don't want to use Alondra conventions, you can allways provide your own
+If you don't want to use Alondra conventions, you can always provide your own
 channel names:
 
 ```
@@ -87,7 +87,7 @@ events such as when a client subscribes to a channel.
   end
 ```
 
-You can also listen to :unsubscribe, :created, :updated, :destoyed or any
+You can also listen to :unsubscribe, :created, :updated, :destroyed or any
 custom event in the observed channels.
 
 ### Push record changes to the client
@@ -101,7 +101,6 @@ clients. You can do that annotating your model:
     belongs_to :chat
 
     push :changes, :to => :chat
-
   end
 ```
 
