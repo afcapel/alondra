@@ -1,3 +1,4 @@
+require 'singleton'
 require 'ffi'
 require 'em-zeromq'
 
@@ -19,8 +20,15 @@ module Alondra
 
     def start
       Rails.logger.info "Starting event queue"
-      conn = context.bind(ZMQ::SUB, SOCKET_PATH, self)
-      conn.setsockopt ZMQ::SUBSCRIBE, '' # receive all
+
+      if @connection
+        puts 'Push connection to event queue started twice'
+        Rails.logger.warn 'Push connection to event queue started twice'
+        reset!
+      end
+
+      @connnection = context.bind(ZMQ::SUB, SOCKET_PATH, self)
+      @connnection.setsockopt ZMQ::SUBSCRIBE, '' # receive all
     end
 
     def on_readable(socket, messages)
@@ -63,6 +71,9 @@ module Alondra
     end
 
     def reset!
+      @connnection.close_connection()
+
+      @connnection = nil
       @context     = nil
       @push_socket = nil
     end
