@@ -23,8 +23,9 @@ module Alondra
   class Alondra < Rails::Engine
 
     # Setting default configuration values
-    config.port  = Rails.env == 'test' ? 12346 : 12345
-    config.host  = 'localhost'
+    config.port         = Rails.env == 'test' ? 12346 : 12345
+    config.host         = 'localhost'
+    config.queue_socket = 'ipc:///tmp/alondra.ipc'
 
     initializer "enable sessions for flash websockets" do
       Rails.application.config.session_store :cookie_store, httponly: false
@@ -38,6 +39,7 @@ module Alondra
     def self.start!
       em_runner do
         Rails.logger.info "Starting alondra server... #{EM.reactor_running?}"
+        EventQueue.instance.start
         Server.run
       end
     end
@@ -51,7 +53,7 @@ module Alondra
           yield
         end
       else
-        Rails.logger.info "running event queue in new thread"
+        Rails.logger.info "running EM reactor in new thread"
         Thread.new do
           EM.synchrony do
             yield

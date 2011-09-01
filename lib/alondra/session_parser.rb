@@ -9,12 +9,15 @@ module Alondra
     end
 
     def parse(websocket)
-      if websocket.request['query']['token'].present?
-        token = websocket.request['query']['token']
+      cookie = websocket.request['cookie'] || websocket.request['Cookie']
+      token  = websocket.request['query']['token']
+
+      if token.present?
         SessionParser.parse_token(token)
-      else
-        cookie = websocket.request['cookie'] || websocket.request['Cookie']
+      elsif cookie.present?
         SessionParser.parse_cookie(cookie)
+      else
+        {}
       end
     end
 

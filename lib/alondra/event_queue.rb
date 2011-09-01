@@ -10,25 +10,16 @@ module Alondra
       instance.send_message(event)
     end
 
-    SOCKET_PATH = 'ipc:///tmp/alondra.ipc'
-
-    def initialize
-      Alondra.em_runner do
-        start if ENV['ALONDRA_SERVER'].present?
-      end
-    end
-
     def start
       Rails.logger.info "Starting event queue"
 
       if @connection
-        puts 'Push connection to event queue started twice'
         Rails.logger.warn 'Push connection to event queue started twice'
         reset!
       end
 
-      @connnection = context.bind(ZMQ::SUB, SOCKET_PATH, self)
-      @connnection.setsockopt ZMQ::SUBSCRIBE, '' # receive all
+      @connection = context.bind(ZMQ::SUB, Alondra.config.queue_socket, self)
+      @connection.setsockopt ZMQ::SUBSCRIBE, '' # receive all
     end
 
     def on_readable(socket, messages)
@@ -71,9 +62,9 @@ module Alondra
     end
 
     def reset!
-      @connnection.close_connection()
+      @connection.close_connection()
 
-      @connnection = nil
+      @connection  = nil
       @context     = nil
       @push_socket = nil
     end
@@ -85,7 +76,7 @@ module Alondra
     end
 
     def push_socket
-      @push_socket ||= context.connect(ZMQ::PUB, SOCKET_PATH)
+      @push_socket ||= context.connect(ZMQ::PUB, Alondra.config.queue_socket)
     end
 
     def context

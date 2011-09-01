@@ -7,8 +7,6 @@ module Alondra
     extend self
 
     def run
-      EventQueue.instance.start
-
       Rails.logger.info "Server starting on port #{Alondra.config.port}"
 
       EM::WebSocket.start(:host => '0.0.0.0', :port => Alondra.config.port) do |websocket|
