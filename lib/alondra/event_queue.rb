@@ -1,3 +1,6 @@
+require 'ffi'
+require 'em-zeromq'
+
 module Alondra
   class EventQueue
     include Singleton
