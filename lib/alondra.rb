@@ -1,5 +1,3 @@
-require 'singleton'
-
 require_relative 'alondra/message'
 require_relative 'alondra/event'
 require_relative 'alondra/connection'
@@ -25,10 +23,10 @@ module Alondra
   class Alondra < Rails::Engine
 
     # Setting default configuration values
-    config.port  = 12345
+    config.port  = Rails.env == 'test' ? 12346 : 12345
     config.host  = 'localhost'
 
-    initializer "sessions for flash websockets" do
+    initializer "enable sessions for flash websockets" do
       Rails.application.config.session_store :cookie_store, httponly: false
     end
 
@@ -64,8 +62,15 @@ module Alondra
     end
 
     def self.die_gracefully_on_signal
-      Signal.trap("INT")  { EM.stop }
-      Signal.trap("TERM") { EM.stop }
+      Signal.trap("INT")  do
+        Rails.logger.warn "INT signal trapped. Shutting down EM reactor"
+        EM.stop
+      end
+
+      Signal.trap("TERM") do
+        Rails.logger.warn "TERM signal trapped. Shutting down EM reactor"
+        EM.stop
+      end
     end
   end
 end
