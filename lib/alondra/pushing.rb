@@ -3,12 +3,12 @@ module Alondra
   class PushingException < StandardError; end
 
   module Pushing
-    def push(options)
-      raise PushingException.new('You need to specify the channel to push') unless options[:to]
+    def push(*args)
+      raise PushingException.new('You need to specify the channel to push') unless args.last[:to]
 
-      channels = Channel.for(options.delete(:to))
+      channels = Channel.for(args.last.delete(:to))
       controller = PushController.new(self)
-      controller.render_push(options, channels)
+      controller.render_push(args, channels)
     end
   end
 end
