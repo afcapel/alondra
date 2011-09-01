@@ -43,7 +43,7 @@ module Alondra
       elsif received_hash[:message]
         message = Message.new(received_hash[:content])
       else
-        Rails.logger.warn "Not recognized message type #{received_string}"
+        Rails.logger.warn "Unrecognized message type #{received_string}"
       end
     end
 
@@ -56,7 +56,7 @@ module Alondra
         begin
           push_socket.send_msg(message.to_json)
         rescue Exception => ex
-          Rails.logger.error "Exception while sending message to event quete: #{ex.message}"
+          Rails.logger.error "Exception while sending message to event queue: #{ex.message}"
         end
       end
     end
