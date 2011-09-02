@@ -4,9 +4,13 @@ Gem::Specification.new do |s|
   s.name = "alondra"
   s.summary = "Add real time capabilities to your rails app"
   s.description = "Add real time capabilities to your rails app"
-  s.files = Dir["lib/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
   s.version = "0.0.1"
   s.authors = ['Alberto F. Capel']
+
+  s.files         = `git ls-files`.split("\n")
+  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
+  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
+  s.require_paths = ["lib"]
 
   # Dependencies
   s.add_dependency('daemons')
