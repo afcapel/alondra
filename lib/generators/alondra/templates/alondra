@@ -24,7 +24,7 @@ Daemons.run_proc 'alondra', options do
   log_path = File.join(log_path, 'alondra.log')
   Rails.logger =  ActiveSupport::BufferedLogger.new(log_path)
 
-  Alondra::Alondra.start!
+  Alondra::Alondra.start_server!
 
   Rails.logger.info "Started alondra server... #{EM.reactor_running?}"
 

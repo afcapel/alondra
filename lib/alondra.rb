@@ -36,10 +36,9 @@ module Alondra
       Dir[File.join(Rails.root, 'app', 'listeners', '*.rb')].each { |file| require file }
     end
 
-    def self.start!
+    def self.start_server!
       em_runner do
         Rails.logger.info "Starting alondra server... #{EM.reactor_running?}"
-        EventQueue.instance.start
         Server.run
       end
     end
@@ -50,13 +49,13 @@ module Alondra
 
       if EM.reactor_running?
         EM.schedule do
-          yield
+          yield if block_given?
         end
       else
         Rails.logger.info "running EM reactor in new thread"
         Thread.new do
           EM.synchrony do
-            yield
+            yield if block_given?
           end
           die_gracefully_on_signal
         end

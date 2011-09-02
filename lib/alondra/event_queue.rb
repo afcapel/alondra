@@ -10,7 +10,19 @@ module Alondra
       instance.send_message(event)
     end
 
-    def start
+    #
+    # This will start the Event loop if it is not already running.
+    #
+    # We initialize it lazily because because some environments like Passenger
+    # or DelayedJob fork the process after loading the Rails environment. When
+    # a multithread process is forked only one thread survives and that puts
+    # EM into an inconsistent state.
+    #
+    def initialize
+      Alondra.em_runner
+    end
+
+    def start_listening
       Rails.logger.info "Starting event queue"
 
       if @connection
@@ -25,7 +37,6 @@ module Alondra
     def on_readable(socket, messages)
       messages.each do |received|
         begin
-          Rails.logger.debug "received in queue #{received.copy_out_string}"
           parse received.copy_out_string
         rescue Exception => ex
           Rails.logger.error "Error raised while processing message"
@@ -41,7 +52,8 @@ module Alondra
       if received_hash[:event]
         receive(Event.new(received_hash))
       elsif received_hash[:message]
-        message = Message.new(received_hash[:content])
+        message = Message.new(received_hash[:message], received_hash[:channel_names])
+        message.send_to_channels
       else
         Rails.logger.warn "Unrecognized message type #{received_string}"
       end
