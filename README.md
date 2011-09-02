@@ -170,3 +170,8 @@ To run the Alondra server, just call the generated script
 In development mode you can also run the Alondra server in its own thread.
 See the [initializer in the example application](https://github.com/afcapel/alondra-example/blob/master/config/initializers/alondra_server.rb)
 for how to do it.
+
+## Contributors
+
+- [Ryan LeCompte](http://github.com/ryanlecompte)
+- [Jaime Iniesta](http://github.com/jaimeiniesta)
