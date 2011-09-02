@@ -8,21 +8,25 @@ module Alondra
     include AbstractController::AssetPaths
     include AbstractController::ViewPaths
 
-    def initialize(context)
+    attr_accessor :channel_names
+
+    def initialize(context, to)
+      @channel_names = Channel.names_for(to)
+
       self.class.view_paths = ActionController::Base.view_paths
       copy_instance_variables_from(context)
     end
 
-    def render_push(options, channels)
+    def render_push(options)
 
       if EM.reactor_thread?
-        render_async(options, channels)
+        render_async(options)
       else
-        render_sync(options, channels)
+        render_sync(options)
       end
     end
 
-    def render_async(options, channels)
+    def render_async(options)
       # View rendering could trigger I/O blocking operations
       # so defer it to another thread
       render_op = Proc.new do
@@ -30,17 +34,17 @@ module Alondra
       end
 
       callback = Proc.new do |message_content|
-        msg = Message.new(message_content)
-        msg.send_to channels
+        msg = Message.new(message_content, channel_names)
+        msg.enqueue
       end
 
       EM.defer(render_op, callback)
     end
 
-    def render_sync(options, channels)
+    def render_sync(options)
       message_content = render_to_string(*options)
-      msg = Message.new(message_content)
-      msg.send_to channels
+      msg = Message.new(message_content, channel_names)
+      msg.enqueue
     end
 
     def _prefixes
