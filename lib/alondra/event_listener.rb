@@ -50,28 +50,44 @@ module Alondra
       def inherited(subclass)
         EventRouter.listeners << subclass
       end
+
+      def matching_callbacks_for(event)
+        callbacks.find_all { |c| c.matches?(event) }
+      end
+
+      def process(event)
+        matching_callbacks_for(event).each do |callback|
+          execute(callback, event)
+        end
+      end
+
+      def execute(callback, event)
+
+        new_instance = new(event)
+
+        callback_proc = Proc.new do
+          begin
+            new_instance.instance_exec(event, &callback.proc)
+          rescue Exception => ex
+            Rails.logger.error 'Error while processing event listener callback'
+            Rails.logger.error ex.message
+            Rails.logger.error ex.stacktrace if ex.respond_to? :stacktrace
+          end
+        end
+
+        EM.defer(&callback_proc)
+      end
     end
 
     def session
       @connection.session
     end
 
-    def receive(event)
+    def initialize(event)
       @event        = event
       @resource     = event.resource
       @channel_name = event.channel_name
       @connection   = event.connection
-
-      self.class.callbacks.each do |callback|
-        next unless callback.matches?(event)
-        begin
-          instance_exec(event, &callback)
-        rescue Exception => ex
-          Rails.logger.error 'Error while processing event listener callback'
-          Rails.logger.error ex.message
-          Rails.logger.error ex.stacktrace if ex.respond_to? :stacktrace
-        end
-      end
     end
   end
 end

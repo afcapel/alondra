@@ -14,8 +14,32 @@ module Alondra
     end
 
     def render_push(options, channels)
-      message_string = render_to_string(*options)
-      msg = Message.new(message_string)
+
+      if EM.reactor_thread?
+        render_async(options, channels)
+      else
+        render_sync(options, channels)
+      end
+    end
+
+    def render_async(options, channels)
+      # View rendering could trigger I/O blocking operations
+      # so defer it to another thread
+      render_op = Proc.new do
+        render_to_string(*options)
+      end
+
+      callback = Proc.new do |message_content|
+        msg = Message.new(message_content)
+        msg.send_to channels
+      end
+
+      EM.defer(render_op, callback)
+    end
+
+    def render_sync(options, channels)
+      message_content = render_to_string(*options)
+      msg = Message.new(message_content)
       msg.send_to channels
     end
 
@@ -24,10 +48,7 @@ module Alondra
     end
 
     def view_paths
-      @view_paths ||= begin
-        paths = ApplicationController.send '_view_paths'
-        paths
-      end
+      @view_paths ||= ApplicationController.send '_view_paths'
     end
 
     def action_name

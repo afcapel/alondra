@@ -30,7 +30,9 @@ module Alondra
       channels = channel_names_from(type, record, options)
 
       channels.each do |channel|
-        event = Event.new(:event => type, :resource => record, :channel => channel)
+        event = Event.new(:event         => type,              :resource => record,
+                          :resource_type => record.class.name, :channel  => channel)
+
         EventQueue.push event
       end
     end

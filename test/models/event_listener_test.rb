@@ -4,8 +4,8 @@ module Alondra
 
   class ChatListener < EventListener
 
-    def self.created_chats
-      @created_chats ||= []
+    def self.created_chat_ids
+      @created_chat_ids ||= []
     end
 
     def self.subscribed_user_ids
@@ -25,12 +25,12 @@ module Alondra
     end
 
     on :created do |event|
-      ChatListener.created_chats << event.resource
+      ChatListener.created_chat_ids << event.resource.id
     end
 
     on :destroyed do |event|
       chat = event.resource
-      ChatListener.created_chats.delete(chat)
+      ChatListener.created_chat_ids.delete(chat.id)
     end
 
     on :subscribed do |event|
@@ -113,17 +113,17 @@ module Alondra
     test 'receive created and destroyes events' do
       ChatListener.listen_to '/chats/'
 
-      chat = Chat.create :name => 'Observed chat'
+      chat = Chat.create(:name => 'Observed chat')
 
       sleep(0.1)
 
-      assert ChatListener.created_chats.include?(chat)
+      assert ChatListener.created_chat_ids.include?(chat.id)
 
       chat.destroy
 
       sleep(0.1)
 
-      assert !ChatListener.created_chats.include?(chat)
+      assert !ChatListener.created_chat_ids.include?(chat.id)
     end
 
     test 'react to subscribed and unsubscribed events' do
@@ -197,6 +197,8 @@ module Alondra
       event = Event.new :event => :custom, :resource => Chat.new, :channel => '/chats/'
       EventRouter.new.process(event)
 
+      sleep(0.1)
+
       assert_equal ChatListener.custom_events.last, event
     end
 
@@ -206,6 +208,8 @@ module Alondra
 
       event = Event.new :event => :custom, :resource => Chat.new, :channel => '/chats/'
       EventRouter.new.process(event)
+
+      sleep(0.1)
 
       assert_equal ChatListener.custom_events.last, event
     end

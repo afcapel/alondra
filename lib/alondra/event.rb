@@ -11,7 +11,7 @@ module Alondra
       @type       = event_hash[:event].to_sym
 
       if Hash === event_hash[:resource]
-        @resource = fetch_resource(event_hash[:resource_type], event_hash[:resource])
+        @resource = fetch(event_hash[:resource_type], event_hash[:resource])
       else
         @resource = event_hash[:resource]
       end
@@ -48,34 +48,24 @@ module Alondra
     end
 
     def to_json
-      ActiveSupport::JSON.encode(as_json)
+      @json_encoded ||= ActiveSupport::JSON.encode(as_json)
     end
 
     private
 
-    def fetch_resource(resource_type, attributes)
+    def fetch(resource_type_name, attributes)
       attributes.symbolize_keys!
-      resource_class = Kernel.const_get(resource_type)
+      resource_class = Kernel.const_get(resource_type_name)
 
       return attributes unless resource_class < ActiveRecord::Base
 
-      if attributes[:id].present?
-        resource_class.where(:id => attributes[:id]).first || build_resource(resource_class, attributes)
-      else
-        build_resource(resource_class, attributes)
-      end
+      resource = resource_class.new
+
+      filtered_attributes = attributes.delete_if { |k,v| !resource.has_attribute?(k) }
+
+      resource.assign_attributes(filtered_attributes, :without_protection => true)
+      resource
     end
 
-    def build_resource(resource_class, attributes)
-      reflections = resource_class.reflections
-      resource_class.new.tap do |resource|
-        attributes.each do |key, value|
-          next unless resource.respond_to? "#{key}=".to_sym
-          next if reflections[key] && reflections[key].klass != value.class
-
-          resource.send("#{key}=", value)
-        end
-      end
-    end
   end
 end

@@ -33,7 +33,7 @@ module Alondra
 
       sleep(0.1)
 
-      wait_until(5) do
+      wait_until(15) do
         page.has_content? 'A chat about everything'
       end
     end

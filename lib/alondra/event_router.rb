@@ -8,11 +8,11 @@ module Alondra
     def process(event)
       event.channel.receive(event)
 
-      self.class.listeners.each do |listener|
-        next unless listener.listen_to?(event.channel_name)
-        new_instance = listener.new
-        new_instance.receive(event)
+      listening_classes = EventRouter.listeners.select do |ob|
+        ob.listen_to?(event.channel_name)
       end
+
+      listening_classes.each { |listening_class| listening_class.process(event) }
     end
   end
 end

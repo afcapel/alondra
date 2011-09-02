@@ -7,8 +7,10 @@ module Alondra
       @original_event_router = EventQueue.instance.send :event_router
       @router = MockEventRouter.new
 
+      @chat = Chat.create(:name => 'Silly chat')
+
       EventQueue.instance.instance_variable_set :@event_router, @router
-      @event = Event.new :event => :custom, :resource => Chat.new, :channel => '/chats/'
+      @event = Event.new :event => :custom, :resource => @chat, :channel => '/chats/'
     end
 
     teardown do
@@ -20,12 +22,17 @@ module Alondra
 
       sleep(0.1)
 
-      assert @router.received_events.last.as_json == @event.as_json
+      last_event =  @router.received_events.last
+
+      assert last_event.type == :custom
+      assert last_event.resource_type == 'Chat'
+      assert last_event.resource.id== @chat.id
+      assert last_event.channel_name == '/chats/'
     end
 
     test "event queue still works when an exception is thrown while processing an event" do
       3.times do
-        bogus = BogusEvent.new :event => :custom, :resource => Chat.new, :channel => '/chats/'
+        bogus = BogusEvent.new :event => :custom, :resource => @chat, :channel => '/chats/'
 
         begin
           EventQueue.push bogus
@@ -38,7 +45,12 @@ module Alondra
 
       sleep(0.1)
 
-      assert @router.received_events.last.as_json == @event.as_json
+      last_event =  @router.received_events.last
+
+      assert last_event.type == :custom
+      assert last_event.resource_type == 'Chat'
+      assert last_event.resource.id == @chat.id
+      assert last_event.channel_name == '/chats/'
     end
   end
 end
