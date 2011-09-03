@@ -20,28 +20,10 @@ module Alondra
     def render_push(options)
 
       if EM.reactor_thread?
-        render_async(options)
-      else
-        render_sync(options)
-      end
-    end
-
-    def render_async(options)
-      # View rendering could trigger I/O blocking operations
-      # so defer it to another thread
-      render_op = Proc.new do
-        render_to_string(*options)
+        Rails.logger.warn('Your are rendering a view from the Event Machine reactor thread')
+        Rails.logger.warn('Rendering a view is a possibly blocking operation, so be careful')
       end
 
-      callback = Proc.new do |message_content|
-        msg = Message.new(message_content, channel_names)
-        msg.enqueue
-      end
-
-      EM.defer(render_op, callback)
-    end
-
-    def render_sync(options)
       message_content = render_to_string(*options)
       msg = Message.new(message_content, channel_names)
       msg.enqueue

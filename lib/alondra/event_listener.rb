@@ -57,15 +57,7 @@ module Alondra
 
       def process(event)
         matching_callbacks_for(event).each do |callback|
-          execute(callback, event)
-        end
-      end
-
-      def execute(callback, event)
-
-        new_instance = new(event)
-
-        callback_proc = Proc.new do
+          new_instance = new(event)
           begin
             new_instance.instance_exec(event, &callback.proc)
           rescue Exception => ex
@@ -74,8 +66,6 @@ module Alondra
             Rails.logger.error ex.stacktrace if ex.respond_to? :stacktrace
           end
         end
-
-        EM.defer(&callback_proc)
       end
     end
 
