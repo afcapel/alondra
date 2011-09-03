@@ -32,9 +32,9 @@ module Alondra
 
     def fire!
       if connection
-        EventQueue.instance.receive self
+        MessageQueue.instance.receive self
       else
-        EventQueue.push self
+        MessageQueueClient.push self
       end
     end
 

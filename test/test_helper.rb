@@ -6,7 +6,7 @@ require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 require "rails/test_help"
 require 'capybara/rails'
 
-Alondra::Alondra.start_server!
+Alondra::Alondra.start_server_in_new_thread!
 
 Rails.backtrace_cleaner.remove_silencers!
 

@@ -9,7 +9,7 @@ module Alondra
     end
 
     def enqueue
-      EventQueue.push self
+      MessageQueueClient.push self
     end
 
     def send_to_channels

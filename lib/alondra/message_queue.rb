@@ -3,30 +3,14 @@ require 'ffi'
 require 'em-zeromq'
 
 module Alondra
-  class EventQueue
+  class MessageQueue
     include Singleton
 
-    def self.push(event)
-      instance.send_message(event)
-    end
-
-    #
-    # This will start the Event loop if it is not already running.
-    #
-    # We initialize it lazily because because some environments like Passenger
-    # or DelayedJob fork the process after loading the Rails environment. When
-    # a multithread process is forked only one thread survives and that puts
-    # EM into an inconsistent state.
-    #
-    def initialize
-      Alondra.em_runner
-    end
-
     def start_listening
-      Rails.logger.info "Starting event queue"
+      Rails.logger.info "Starting message queue"
 
       if @connection
-        Rails.logger.warn 'Push connection to event queue started twice'
+        Rails.logger.warn 'Push connection to message queue started twice'
         reset!
       end
 
@@ -63,16 +47,6 @@ module Alondra
       event_router.process(event)
     end
 
-    def send_message(message)
-      EM.schedule do
-        begin
-          push_socket.send_msg(message.to_json)
-        rescue Exception => ex
-          Rails.logger.error "Exception while sending message to event queue: #{ex.message}"
-        end
-      end
-    end
-
     def reset!
       @connection.close_connection()
 
@@ -85,10 +59,6 @@ module Alondra
 
     def event_router
       @event_router ||= EventRouter.new
-    end
-
-    def push_socket
-      @push_socket ||= context.connect(ZMQ::PUB, Alondra.config.queue_socket)
     end
 
     def context

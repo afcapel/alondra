@@ -4,7 +4,8 @@ require_relative 'alondra/connection'
 require_relative 'alondra/channel'
 require_relative 'alondra/command'
 require_relative 'alondra/event_router'
-require_relative 'alondra/event_queue'
+require_relative 'alondra/message_queue_client'
+require_relative 'alondra/message_queue'
 require_relative 'alondra/message_dispatcher'
 require_relative 'alondra/pushing'
 require_relative 'alondra/event_listener'
@@ -36,29 +37,25 @@ module Alondra
       Dir[File.join(Rails.root, 'app', 'listeners', '*.rb')].each { |file| require file }
     end
 
-    def self.start_server!
-      em_runner do
-        Rails.logger.info "Starting alondra server... #{EM.reactor_running?}"
-        Server.run
+    def self.start_server_in_new_thread!
+      Thread.new do
+        start_server!
       end
     end
 
-    def self.em_runner
-      Rails.logger.debug "Proccess running EM: #{caller.last}"
-      Rails.logger.debug "PROCESSS has pid #{Process.pid}"
-
+    def self.start_server!
       if EM.reactor_running?
         EM.schedule do
-          yield if block_given?
+          MessageQueue.instance.start_listening
+          Server.run
         end
       else
-        Rails.logger.info "running EM reactor in new thread"
-        Thread.new do
-          EM.synchrony do
-            yield if block_given?
-          end
-          die_gracefully_on_signal
+        Rails.logger.info "starting EM reactor"
+        EM.run do
+          MessageQueue.instance.start_listening
+          Server.run
         end
+        die_gracefully_on_signal
       end
     end
 

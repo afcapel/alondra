@@ -33,7 +33,7 @@ module Alondra
         event = Event.new(:event         => type,              :resource => record,
                           :resource_type => record.class.name, :channel  => channel)
 
-        EventQueue.push event
+        MessageQueueClient.push event
       end
     end
 
