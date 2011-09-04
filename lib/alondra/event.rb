@@ -6,9 +6,10 @@ module Alondra
     attr_reader :resource_type
     attr_reader :connection
 
-    def initialize(event_hash, connection = nil)
-      @connection = connection
-      @type       = event_hash[:event].to_sym
+    def initialize(event_hash, from_json = nil, connection = nil)
+      @connection   = connection
+      @type         = event_hash[:event].to_sym
+      @json_encoded = from_json
 
       if Hash === event_hash[:resource]
         @resource = fetch(event_hash[:resource_type], event_hash[:resource])
@@ -32,7 +33,10 @@ module Alondra
 
     def fire!
       if connection
-        MessageQueue.instance.receive self
+        # We are inside the Alondra Server
+        EM.schedule do
+          MessageQueue.instance.receive self
+        end
       else
         MessageQueueClient.push self
       end
@@ -66,6 +70,5 @@ module Alondra
       resource.assign_attributes(filtered_attributes, :without_protection => true)
       resource
     end
-
   end
 end

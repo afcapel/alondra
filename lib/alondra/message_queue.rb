@@ -34,7 +34,8 @@ module Alondra
       received_hash = ActiveSupport::JSON.decode(received_string).symbolize_keys
 
       if received_hash[:event]
-        receive(Event.new(received_hash))
+        event = Event.new(received_hash, received_string)
+        receive(event)
       elsif received_hash[:message]
         message = Message.new(received_hash[:message], received_hash[:channel_names])
         message.send_to_channels

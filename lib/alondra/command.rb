@@ -32,8 +32,7 @@ module Alondra
                     :resource_type => @connection.session.class.name,
                     :channel       => @channel_name}
 
-      event = Event.new event_hash, connection
-      event.fire!
+      Event.new(event_hash, nil, connection).fire!
     end
   end
 end

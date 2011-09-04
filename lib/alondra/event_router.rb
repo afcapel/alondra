@@ -8,6 +8,8 @@ module Alondra
     def process(event)
       event.channel.receive(event)
 
+      # Event listeners callback can manipulate AR objects and so can potentially
+      # block the EM reactor thread. To avoid that, we defer them to another thread.
       EM.defer do
 
         # Ensure the connection associated with the thread is checked in

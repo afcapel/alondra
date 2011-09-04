@@ -31,7 +31,7 @@ module Alondra
 
         websocket.onmessage do |msg|
           Rails.logger.info "received: #{msg}"
-          MessageDispatcher.dispatch(msg, Connections[websocket])
+          CommandDispatcher.dispatch(msg, Connections[websocket])
         end
       end
 

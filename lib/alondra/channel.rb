@@ -73,7 +73,7 @@ module Alondra
                       :channel  => name }
 
 
-      event = Event.new event_hash, connection
+      event = Event.new(event_hash, nil, connection)
       event.fire!
     end
 
