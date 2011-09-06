@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.summary = "Add real time capabilities to your rails app"
   s.description = "Add real time capabilities to your rails app"
   s.version = "0.0.2"
-  s.authors = ['Alberto F. Capel']
+  s.authors = ['Alberto F. Capel', 'Ryan LeCompte']
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
