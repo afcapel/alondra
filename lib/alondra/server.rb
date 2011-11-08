@@ -1,6 +1,4 @@
 require 'em-websocket'
-require 'em-synchrony'
-require 'em-synchrony/em-http'
 
 module Alondra
   module Server
@@ -13,7 +11,7 @@ module Alondra
 
         websocket.onopen do
           session = SessionParser.parse(websocket)
-
+          
           Rails.logger.info "client connected."
           Connection.new(websocket, session)
         end
@@ -24,6 +22,7 @@ module Alondra
         end
 
         websocket.onerror do |ex|
+          puts "Error: #{ex.message}"
           Rails.logger.error "Error: #{ex.message}"
           Rails.logger.error ex.backtrace.join("\n")
           Connections[websocket].destroy! if Connections[websocket]
@@ -36,6 +35,7 @@ module Alondra
       end
 
       EM.error_handler do |error|
+        puts "Error raised during event loop: #{error.message}"
         Rails.logger.error "Error raised during event loop: #{error.message}"
         Rails.logger.error error.stacktrace if error.respond_to? :stacktrace
       end

@@ -1,3 +1,6 @@
+require 'digest'
+require 'securerandom'
+
 class User < ActiveRecord::Base
   # new columns need to be added here to be writable through mass assignment
   attr_accessible :username, :email, :password, :password_confirmation
@@ -20,14 +23,14 @@ class User < ActiveRecord::Base
   end
 
   def encrypt_password(pass)
-    BCrypt::Engine.hash_secret(pass, password_salt)
+    Digest::SHA2.hexdigest(pass + password_salt)
   end
 
   private
 
   def prepare_password
     unless password.blank?
-      self.password_salt = BCrypt::Engine.generate_salt
+      self.password_salt = SecureRandom.hex(16)
       self.password_hash = encrypt_password(password)
     end
   end

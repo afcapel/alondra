@@ -18,8 +18,6 @@ Gem::Specification.new do |s|
   s.add_dependency('rails', '>= 3.1.0')
   s.add_dependency('eventmachine', '>= 1.0.0.beta.3')
   s.add_dependency('em-websocket')
-  s.add_dependency('em-synchrony')
-  s.add_dependency('em-http-request')
-  s.add_dependency('ffi', '1.0.9')
+  s.add_dependency('ffi-rzmq', '0.8.0')
   s.add_dependency('em-zeromq', '0.2.1')
 end

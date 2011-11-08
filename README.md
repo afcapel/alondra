@@ -17,7 +17,7 @@ To subscribe to a channel you can use the built in helper:
 ```
 
 Alondra uses [conventions to map records and classes to channel names](https://github.com/afcapel/alondra/wiki/Event-conventions).
-The lastexample will subscribe the browser to a channel named '/chats/:chat_id'.
+The last example will subscribe the browser to a channel named '/chats/:chat_id'.
 Then, the Alondra client will render any message pushed to that channel.
 
 If you don't want to use Alondra conventions, you can always provide your own
