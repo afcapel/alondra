@@ -17,7 +17,7 @@ module Alondra
       elsif cookie.present?
         SessionParser.parse_cookie(cookie)
       else
-        {}
+        Hash.new
       end
     end
 
@@ -30,7 +30,9 @@ module Alondra
         verifier.verify(CGI.unescape(encoded_session))
       rescue ActiveSupport::MessageVerifier::InvalidSignature => ex
         Rails.logger.error "invalid session cookie: #{cookie}"
-        {}
+        Hash.new
+      rescue Exception => ex
+        Rails.logger.error "Exception parsing session from cookie: #{ex.message}"
       end
     end
 
@@ -40,7 +42,7 @@ module Alondra
         ActiveSupport::JSON.decode(decoded_token)
       rescue ActiveSupport::MessageVerifier::InvalidSignature => ex
         Rails.logger.error "invalid session token: #{token}"
-        {}
+        Hash.new
       end
     end
 

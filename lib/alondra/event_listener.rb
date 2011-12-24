@@ -48,6 +48,9 @@ module Alondra
       end
 
       def inherited(subclass)
+        # In development mode Rails will load the same class many times
+        # Delete it first if we already have parsed it
+        EventRouter.listeners.delete_if { |l| l.name == subclass.name }
         EventRouter.listeners << subclass
       end
 

@@ -33,8 +33,10 @@ module Alondra
     end
 
     initializer "load listeners" do
-      Rails.logger.info "Loading event listeners in #{File.join(Rails.root, 'app', 'listeners', '*.rb')}"
-      Dir[File.join(Rails.root, 'app', 'listeners', '*.rb')].each { |file| require file }
+      listeners_dir = File.join(Rails.root, 'app', 'listeners')
+      
+      Rails.logger.info "Loading event listeners in #{listeners_dir}"
+      Dir[File.join(listeners_dir, '*.rb')].each { |file| require_dependency file }
     end
 
     def self.start_server_in_new_thread!
