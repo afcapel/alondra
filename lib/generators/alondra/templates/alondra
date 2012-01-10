@@ -6,28 +6,25 @@ require 'rubygems'
 require 'bundler/setup' if File.exists?(ENV['BUNDLE_GEMFILE'])
 require 'daemons'
 
-
-log_dir = File.expand_path('../log', File.dirname(__FILE__))
-
 options = {
   :app_name   => 'alondra',
   :dir_mode   => :script,
-  :dir        => 'log',
-  :log_dir    => log_dir
+  :dir        => 'tmp/pids'
 }
 
 Daemons.run_proc 'alondra', options do
 
   ENV["ALONDRA_SERVER"] = 'true'
+  
   require_relative File.join('..', 'config', 'environment')
-
-  log_path = File.join(log_path, 'alondra.log')
+  
+  log_path = File.expand_path(File.join(File.dirname(__FILE__), '..', 'log', 'alondra.log'))
+  
   Rails.logger =  ActiveSupport::BufferedLogger.new(log_path)
-
-  Alondra::Alondra.start_server!
 
   Rails.logger.info "Started alondra server... #{EM.reactor_running?}"
 
   EM.reactor_thread.join
+  
   Rails.logger.info 'Alondra server terminated'
 end
