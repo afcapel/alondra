@@ -20,9 +20,6 @@ module Alondra
     end
 
     def render_push(options)
-      
-      self.extend Rails.application.routes.url_helpers
-
       if EM.reactor_thread?
         Rails.logger.warn('You are rendering a view from the Event Machine reactor thread')
         Rails.logger.warn('Rendering a view is a possibly blocking operation, so be careful')

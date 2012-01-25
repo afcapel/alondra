@@ -27,6 +27,13 @@ module Alondra
     config.port         = Rails.env == 'test' ? 12346 : 12345
     config.host         = 'localhost'
     config.queue_socket = 'ipc:///tmp/alondra.ipc'
+    
+    initializer "configure EM thread pool" do
+      # If we have more threads than db connections we will exhaust the conn pool
+      threadpool_size = ActiveRecord::Base.connection_pool.instance_variable_get :@size
+      threadpool_size -= 2 if threadpool_size > 2
+      EM.threadpool_size = threadpool_size
+    end
 
     initializer "enable sessions for flash websockets" do
       Rails.application.config.session_store :cookie_store, httponly: false
@@ -37,6 +44,10 @@ module Alondra
       
       Rails.logger.info "Loading event listeners in #{listeners_dir}"
       Dir[File.join(listeners_dir, '*.rb')].each { |file| require_dependency file }
+    end
+    
+    config.after_initialize do
+      PushController.send :include, Rails.application.routes.url_helpers
     end
 
     def self.start_server_in_new_thread!
@@ -53,6 +64,7 @@ module Alondra
         end
       else
         Rails.logger.info "starting EM reactor"
+        
         EM.run do
           MessageQueue.instance.start_listening
           Server.run

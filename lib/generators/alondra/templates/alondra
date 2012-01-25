@@ -22,7 +22,7 @@ Daemons.run_proc 'alondra', options do
   
   Rails.logger =  ActiveSupport::BufferedLogger.new(log_path)
 
-  Rails.logger.info "Started alondra server... #{EM.reactor_running?}"
+  Rails.logger.info "Started alondra server on port #{Alondra::Alondra.config.port}... #{EM.reactor_running?}"
 
   EM.reactor_thread.join
   
