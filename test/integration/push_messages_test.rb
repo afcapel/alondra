@@ -31,6 +31,8 @@ module Alondra
       end
 
       push :partial => '/shared/message', :to => chat_path
+      
+      sleep(0.1)
 
       wait_until 20 do
         page.has_content? "#{@user.username} says hola!"

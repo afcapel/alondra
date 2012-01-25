@@ -40,7 +40,7 @@ module Alondra
 
       assert EM.reactor_running?
 
-      sleep(0.5) # Leave event machine to catch up
+      sleep(0.1) # Leave event machine to catch up
 
       last_message = @connection.messages.last
       assert_equal event.to_json, last_message

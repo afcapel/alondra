@@ -31,7 +31,7 @@ module Alondra
 
       chat.update_attributes! :name => 'A chat about everything'
 
-      sleep(0.5)
+      sleep(0.1)
 
       wait_until(15) do
         page.has_content? 'A chat about everything'
