@@ -7,57 +7,61 @@
 window.WEB_SOCKET_SWF_LOCATION = "<%= asset_path 'WebSocketMain.swf' %>"
 
 class @AlondraClient
-  constructor: (host, port, channels, token = null, retry = 5000) ->
-    @channels = channels
-    @token    = token
-    @retry    = retry
-    @url = "ws://#{host}:#{port}"
-
+  constructor: (@server, @channels=[], @token = null, @retry = 10000) ->
+    
+    @channels = [@channels] unless @channels instanceof Array
+    
+    @url = "ws://#{@server}"
     @url += "?token=#{@token}" if @token
 
-    this.connect()
+    @connect()
 
-  subscribe: (channel) ->
+  subscribe: (channel) =>
+    if @socket.readyState ==  0 # Socket is connecting
+      @channels.push(channel)   # Schedule for later subscription
+      return
+    
     subscription =
       command: 'subscribe'
       channel: channel
 
     @socket.send $.toJSON(subscription)
-
-  connect: ->
-    @socket   = new WebSocket(@url)
-
-    @socket.onopen = () =>
-      if @reconnectInterval
-        clearInterval(@reconnectInterval)
-        @reconnectInterval = null
-
-      if @channels instanceof Array
-        this.subscribe(channel) for channel in @channels
-      else
-        this.subscribe(@channels)
+    @
+    
+  connected: () =>
+    if @reconnectInterval
+      clearInterval(@reconnectInterval)
+      @reconnectInterval = null
+      
+    @subscribe(channel) for channel in @channels
+    
+  connect: =>
+    @socket = new WebSocket(@url)
+    
+    @socket.onopen = @connected
 
     @socket.onclose = () =>
       this.reconnect()
 
-
     @socket.onmessage = (message) =>
       msg = $.parseJSON(message.data)
       if msg.event
-        this.process(msg)
+        @process(msg)
       else
-        this.execute(msg)
+        @execute(msg)
 
 
     @socket.onerror = (error) =>
-      this.reconnect()
+      @reconnect()
+    
+    @
 
   process: (serverEvent) ->
     eventName    = serverEvent.event
     resourceType = serverEvent.resource_type
     resource     = serverEvent.resource
 
-    $(this).trigger("#{eventName}.#{resourceType}", resource)
+    $(@).trigger("#{eventName}.#{resourceType}", resource)
 
   execute: (message) ->
     eval(message.message)
