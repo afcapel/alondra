@@ -16,8 +16,6 @@ Gem::Specification.new do |s|
   s.add_dependency('daemons')
   s.add_dependency('uuidtools')
   s.add_dependency('rails', '>= 3.1.0')
-  s.add_dependency('eventmachine', '>= 1.0.0.beta.3')
   s.add_dependency('em-websocket')
-  s.add_dependency('ffi-rzmq', '0.8.0')
-  s.add_dependency('em-zeromq', '0.2.1')
+  s.add_dependency('em-zeromq', '0.2.2')
 end
