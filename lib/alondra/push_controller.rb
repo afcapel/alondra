@@ -6,21 +6,25 @@ module Alondra
     include AbstractController::Helpers
     include AbstractController::Translation
     include AbstractController::AssetPaths
-    include AbstractController::ViewPaths
+    include ActionController::RequestForgeryProtection
 
     attr_accessor :channel_names
+    attr_accessor :request
 
-    def initialize(context, to)
+    def initialize(context, to, request = nil)
       @channel_names = Channel.names_for(to)
-
+      @request = request
+      
       self.class.view_paths = ActionController::Base.view_paths
       copy_instance_variables_from(context)
     end
 
     def render_push(options)
+      
+      self.extend Rails.application.routes.url_helpers
 
       if EM.reactor_thread?
-        Rails.logger.warn('Your are rendering a view from the Event Machine reactor thread')
+        Rails.logger.warn('You are rendering a view from the Event Machine reactor thread')
         Rails.logger.warn('Rendering a view is a possibly blocking operation, so be careful')
       end
 
@@ -36,7 +40,7 @@ module Alondra
     def view_paths
       @view_paths ||= ApplicationController.send '_view_paths'
     end
-
+    
     def action_name
       'push'
     end
