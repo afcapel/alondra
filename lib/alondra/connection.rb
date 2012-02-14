@@ -40,7 +40,7 @@ module Alondra
     end
 
     def receive(event_or_message)
-      Rails.logger.debug "sending: #{event_or_message.to_json}"
+      Log.info "sending: #{event_or_message.to_json}"
       websocket.send event_or_message.to_json
     end
 

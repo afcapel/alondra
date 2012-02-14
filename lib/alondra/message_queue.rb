@@ -7,10 +7,10 @@ module Alondra
     include Singleton
 
     def start_listening
-      Rails.logger.info "Starting message queue"
+      Log.info "Starting message queue"
 
       if @connection
-        Rails.logger.warn 'Push connection to message queue started twice'
+        Log.warn 'Push connection to message queue started twice'
         reset!
       end
 
@@ -23,9 +23,9 @@ module Alondra
         begin
           parse received.copy_out_string
         rescue Exception => ex
-          Rails.logger.error "Error raised while processing message"
-          Rails.logger.error "#{ex.class}: #{ex.message}"
-          Rails.logger.error ex.backtrace.join("\n") if ex.respond_to? :backtrace
+          Log.error "Error raised while processing message"
+          Log.error "#{ex.class}: #{ex.message}"
+          Log.error ex.backtrace.join("\n") if ex.respond_to? :backtrace
         end
       end
     end
@@ -40,7 +40,7 @@ module Alondra
         message = Message.new(received_hash[:message], received_hash[:channel_names])
         message.send_to_channels
       else
-        Rails.logger.warn "Unrecognized message type #{received_string}"
+        Log.warn "Unrecognized message type #{received_string}"
       end
     end
 

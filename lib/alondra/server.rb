@@ -5,39 +5,39 @@ module Alondra
     extend self
 
     def run
-      Rails.logger.info "Server starting on port #{Alondra.config.port}"
+      Log.info "Server starting on port #{Alondra.config.port}"
 
       EM::WebSocket.start(:host => '0.0.0.0', :port => Alondra.config.port) do |websocket|
 
         websocket.onopen do
           session = SessionParser.parse(websocket)
           
-          Rails.logger.info "client connected."
+          Log.info "client connected."
           Connection.new(websocket, session)
         end
 
         websocket.onclose do
-          Rails.logger.info "Connection closed"
+          Log.info "Connection closed"
           Connections[websocket].destroy! if Connections[websocket].present?
         end
 
         websocket.onerror do |ex|
           puts "Error: #{ex.message}"
-          Rails.logger.error "Error: #{ex.message}"
-          Rails.logger.error ex.backtrace.join("\n")
+          Log.error "Error: #{ex.message}"
+          Log.error ex.backtrace.join("\n")
           Connections[websocket].destroy! if Connections[websocket]
         end
 
         websocket.onmessage do |msg|
-          Rails.logger.info "received: #{msg}"
+          Log.info "received: #{msg}"
           CommandDispatcher.dispatch(msg, Connections[websocket])
         end
       end
 
       EM.error_handler do |error|
         puts "Error raised during event loop: #{error.message}"
-        Rails.logger.error "Error raised during event loop: #{error.message}"
-        Rails.logger.error error.stacktrace if error.respond_to? :stacktrace
+        Log.error "Error raised during event loop: #{error.message}"
+        Log.error error.stacktrace if error.respond_to? :stacktrace
       end
     end
   end

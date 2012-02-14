@@ -64,9 +64,9 @@ module Alondra
           begin
             new_instance.instance_exec(event, &callback.proc)
           rescue Exception => ex
-            Rails.logger.error 'Error while processing event listener callback'
-            Rails.logger.error ex.message
-            Rails.logger.error ex.stacktrace if ex.respond_to? :stacktrace
+            Log.error 'Error while processing event listener callback'
+            Log.error ex.message
+            Log.error ex.stacktrace if ex.respond_to? :stacktrace
           end
         end
       end

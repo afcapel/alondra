@@ -32,7 +32,7 @@ module Alondra
         begin
           push_socket.send_msg(message.to_json)
         rescue Exception => ex
-          Rails.logger.error "Exception while sending message to message queue: #{ex.message}"
+          Log.error "Exception while sending message to message queue: #{ex.message}"
         end
       end
     end
@@ -52,7 +52,7 @@ module Alondra
       begin
         push_socket.send_string(message.to_json)
       rescue Exception => ex
-        Rails.logger.error "Exception while sending message to message queue: #{ex.message}"
+        Log.error "Exception while sending message to message queue: #{ex.message}"
       end
     end
 

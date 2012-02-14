@@ -1,3 +1,4 @@
+require_relative 'alondra/log'
 require_relative 'alondra/message'
 require_relative 'alondra/event'
 require_relative 'alondra/connection'
@@ -42,7 +43,7 @@ module Alondra
     initializer "load listeners" do
       listeners_dir = File.join(Rails.root, 'app', 'listeners')
       
-      Rails.logger.info "Loading event listeners in #{listeners_dir}"
+      Log.info "Loading event listeners in #{listeners_dir}"
       Dir[File.join(listeners_dir, '*.rb')].each { |file| require_dependency file }
     end
     
@@ -63,7 +64,7 @@ module Alondra
           Server.run
         end
       else
-        Rails.logger.info "starting EM reactor"
+        Log.info "starting EM reactor"
         
         EM.run do
           MessageQueue.instance.start_listening
@@ -75,12 +76,12 @@ module Alondra
 
     def self.die_gracefully_on_signal
       Signal.trap("INT")  do
-        Rails.logger.warn "INT signal trapped. Shutting down EM reactor"
+        Log.warn "INT signal trapped. Shutting down EM reactor"
         EM.stop
       end
 
       Signal.trap("TERM") do
-        Rails.logger.warn "TERM signal trapped. Shutting down EM reactor"
+        Log.warn "TERM signal trapped. Shutting down EM reactor"
         EM.stop
       end
     end
