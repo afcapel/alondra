@@ -66,7 +66,7 @@ module Alondra
           rescue Exception => ex
             Log.error 'Error while processing event listener callback'
             Log.error ex.message
-            Log.error ex.stacktrace if ex.respond_to? :stacktrace
+            Log.error ex.backtrace.join("\n")
           end
         end
       end

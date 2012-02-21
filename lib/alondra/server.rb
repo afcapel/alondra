@@ -37,7 +37,7 @@ module Alondra
       EM.error_handler do |error|
         puts "Error raised during event loop: #{error.message}"
         Log.error "Error raised during event loop: #{error.message}"
-        Log.error error.stacktrace if error.respond_to? :stacktrace
+        Log.error error.backtrace
       end
     end
   end
