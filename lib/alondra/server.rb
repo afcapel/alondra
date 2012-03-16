@@ -11,7 +11,7 @@ module Alondra
 
         websocket.onopen do
           session = SessionParser.parse(websocket)
-          
+
           Log.info "client connected."
           Connection.new(websocket, session)
         end
@@ -37,7 +37,7 @@ module Alondra
       EM.error_handler do |error|
         puts "Error raised during event loop: #{error.message}"
         Log.error "Error raised during event loop: #{error.message}"
-        Log.error error.backtrace
+        Log.error error.backtrace.join("\n")
       end
     end
   end
