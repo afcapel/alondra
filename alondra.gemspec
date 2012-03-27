@@ -4,7 +4,7 @@ Gem::Specification.new do |s|
   s.name = "alondra"
   s.summary = "Add real time capabilities to your rails app"
   s.description = "Add real time capabilities to your rails app"
-  s.version = "0.0.3"
+  s.version = "0.0.4"
   s.authors = ['Alberto F. Capel', 'Ryan LeCompte']
 
   s.files         = `git ls-files`.split("\n")
