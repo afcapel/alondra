@@ -58,19 +58,18 @@ module Alondra
     end
 
     def self.start_server!
+      
+      start_server_proc = Proc.new do
+        MessageQueue.instance.start_listening
+        Server.run
+        die_gracefully_on_signal
+      end
+      
       if EM.reactor_running?
-        EM.schedule do
-          MessageQueue.instance.start_listening
-          Server.run
-        end
+        EM.schedule(start_server_proc) 
       else
         Log.info "starting EM reactor"
-        
-        EM.run do
-          MessageQueue.instance.start_listening
-          Server.run
-        end
-        die_gracefully_on_signal
+        EM.run(start_server_proc)
       end
     end
 

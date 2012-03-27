@@ -27,10 +27,12 @@ module Alondra
     end
 
     def fire_event(event_type)
-      event_hash = {:event         => event_type,
-                    :resource      => @connection.session,
-                    :resource_type => @connection.session.class.name,
-                    :channel       => @channel_name}
+      event_hash = {
+        :event         => event_type,
+        :resource      => @connection.session,
+        :resource_type => @connection.session.class.name,
+        :channel       => @channel_name
+      }
 
       Event.new(event_hash, nil, connection).fire!
     end

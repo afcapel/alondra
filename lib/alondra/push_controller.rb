@@ -21,8 +21,8 @@ module Alondra
 
     def render_push(options)
       if EM.reactor_thread?
-        Log.warn('You are rendering a view from the Event Machine reactor thread')
-        Log.warn('Rendering a view is a possibly blocking operation, so be careful')
+        Log.warn 'You are rendering a view from the Event Machine reactor thread'
+        Log.warn 'Rendering a view is a possibly blocking operation, so be careful'
       end
 
       message_content = render_to_string(*options)

@@ -11,20 +11,8 @@ module Alondra
       @type         = event_hash[:event].to_sym
       @json_encoded = from_json
 
-      if Hash === event_hash[:resource]
-        @resource = fetch(event_hash[:resource_type], event_hash[:resource])
-      else
-        @resource = event_hash[:resource]
-      end
-
-      @resource_type = event_hash[:resource_type] || resource.class.name
-
-      if event_hash[:channel].present?
-        @channel_name  = event_hash[:channel]
-      else
-        channel_type = type == :updated ? :member : :collection
-        Channel.default_name_for(resource, channel_type)
-      end
+      set_resource_from(event_hash)
+      set_channel_from(event_hash)
     end
 
     def channel
@@ -69,6 +57,25 @@ module Alondra
 
       resource.assign_attributes(filtered_attributes, :without_protection => true)
       resource
+    end
+    
+    def set_resource_from(event_hash)
+      if Hash === event_hash[:resource]
+        @resource = fetch(event_hash[:resource_type], event_hash[:resource])
+      else
+        @resource = event_hash[:resource]
+      end
+      
+      @resource_type = event_hash[:resource_type] || resource.class.name
+    end
+    
+    def set_channel_from(event_hash)
+      if event_hash[:channel].present?
+        @channel_name  = event_hash[:channel]
+      else
+        channel_type = type == :updated ? :member : :collection
+        Channel.default_name_for(resource, channel_type)
+      end
     end
   end
 end
