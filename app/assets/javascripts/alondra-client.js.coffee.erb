@@ -8,9 +8,9 @@ window.WEB_SOCKET_SWF_LOCATION = "<%= asset_path 'WebSocketMain.swf' %>"
 
 class @AlondraClient
   constructor: (@server, @channels=[], @token = null, @retry = 10000) ->
-    
+
     @channels = [@channels] unless @channels instanceof Array
-    
+
     @url = "ws://#{@server}"
     @url += "?token=#{@token}" if @token
 
@@ -20,28 +20,31 @@ class @AlondraClient
     if @socket.readyState ==  0 # Socket is connecting
       @channels.push(channel)   # Schedule for later subscription
       return
-    
+
     subscription =
       command: 'subscribe'
       channel: channel
 
     @socket.send $.toJSON(subscription)
     @
-    
-  connected: () =>
+
+  opened: () =>
     if @reconnectInterval
       clearInterval(@reconnectInterval)
       @reconnectInterval = null
-      
+
     @subscribe(channel) for channel in @channels
-    
+    $(this).trigger('connected')
+    true
+
   connect: =>
     @socket = new WebSocket(@url)
-    
-    @socket.onopen = @connected
+
+    @socket.onopen = @opened
 
     @socket.onclose = () =>
       this.reconnect()
+      $(this).trigger('disconnected')
 
     @socket.onmessage = (message) =>
       msg = $.parseJSON(message.data)
@@ -53,7 +56,8 @@ class @AlondraClient
 
     @socket.onerror = (error) =>
       @reconnect()
-    
+      $(this).trigger('error', error)
+
     @
 
   process: (serverEvent) ->
