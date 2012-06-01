@@ -6,7 +6,8 @@ module Alondra
     include AbstractController::Helpers
     include AbstractController::Translation
     include AbstractController::AssetPaths
-    include ActionController::RequestForgeryProtection
+
+    helper_method :protect_against_forgery?
 
     attr_accessor :channel_names
     attr_accessor :request
@@ -14,7 +15,7 @@ module Alondra
     def initialize(context, to, request = nil)
       @channel_names = Channel.names_for(to)
       @request = request
-      
+
       self.class.view_paths = ActionController::Base.view_paths
       copy_instance_variables_from(context)
     end
@@ -37,9 +38,17 @@ module Alondra
     def view_paths
       @view_paths ||= ApplicationController.send '_view_paths'
     end
-    
+
     def action_name
       'push'
+    end
+
+    def protect_against_forgery?
+      false
+    end
+
+    def self.protect_against_forgery?
+      false
     end
 
     private
