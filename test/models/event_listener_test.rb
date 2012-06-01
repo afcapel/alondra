@@ -171,7 +171,7 @@ module Alondra
       session = {:user_id => 30 }
       connection = MockConnection.new(session)
 
-      chat = Factory.create :chat
+      chat = FactoryGirl.create :chat
 
       chat_channel = "/chats/#{chat.id}"
 

@@ -5,7 +5,7 @@ module Alondra
   class PushingTest < ActiveSupport::TestCase
 
     test "publish created events to the specified channel" do
-      chat       = Factory.create :chat
+      chat       = FactoryGirl.create :chat
       connection = MockConnection.new
       message = chat.messages.build(:text => 'test message')
 

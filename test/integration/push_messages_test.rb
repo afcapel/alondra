@@ -16,10 +16,10 @@ module Alondra
     test "execute messages in client" do
       self.extend Pushing
 
-      @user = Factory.create :user
+      @user = FactoryGirl.create :user
       @text = 'hola!'
 
-      chat = Factory.create :chat, :name => 'A chat to receive messages'
+      chat = FactoryGirl.create :chat, :name => 'A chat to receive messages'
 
       login_as @user
 

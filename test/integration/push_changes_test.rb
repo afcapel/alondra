@@ -16,8 +16,8 @@ module Alondra
 
     test "push chat changes to client" do
 
-      user = Factory.create :user
-      chat = Factory.create :chat, :name => 'A chat about nothing'
+      user = FactoryGirl.create :user
+      chat = FactoryGirl.create :chat, :name => 'A chat about nothing'
 
       login_as user
 
