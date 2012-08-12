@@ -9,13 +9,15 @@ module Alondra
     def start_listening
       Log.info "Starting message queue"
 
-      if @connection
-        Log.warn 'Push connection to message queue started twice'
+      if @pull_socket || @push_socket
+        Log.warn 'Connections to message queue started twice'
         reset!
       end
-
-      @connection = context.bind(ZMQ::SUB, Alondra.config.queue_socket, self)
-      @connection.setsockopt ZMQ::SUBSCRIBE, '' # receive all
+      
+      push_socket  
+      pull_socket
+      
+      self
     end
 
     def on_readable(socket, messages)
@@ -47,13 +49,30 @@ module Alondra
     def receive(event)
       event_router.process(event)
     end
+    
+    def push_socket
+      @push_socket ||= begin
+        push_socket = context.socket(ZMQ::PUSH)  
+        push_socket.connect(Alondra.config.queue_socket)
+        push_socket
+      end
+    end
+    
+    def pull_socket
+      @pull_socket ||= begin
+        pull_socket = context.socket(ZMQ::PULL, self)  
+        pull_socket.bind(Alondra.config.queue_socket)
+        pull_socket
+      end
+    end
 
     def reset!
-      @connection.close_connection()
-
-      @connection  = nil
+      @push_socket.close()
+      @pull_socket.close()
+      
       @context     = nil
       @push_socket = nil
+      @pull_socket = nil
     end
 
     private

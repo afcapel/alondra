@@ -38,7 +38,11 @@ module Alondra
     end
 
     def push_socket
-      @push_socket ||= context.connect(ZMQ::PUB, Alondra.config.queue_socket)
+      @push_socket ||= begin
+        push_socket = context.socket(ZMQ::PUSH)
+        push_socket.connect(Alondra.config.queue_socket)
+        push_socket
+      end
     end
 
     def context
@@ -58,7 +62,7 @@ module Alondra
 
     def push_socket
       @push_socket ||= begin
-        socket = context.socket(ZMQ::PUB)
+        socket = context.socket(ZMQ::PUSH)
         socket.connect(Alondra.config.queue_socket)
         socket
       end

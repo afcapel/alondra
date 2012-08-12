@@ -58,11 +58,9 @@ module Alondra
     end
 
     def self.start_server!
-      
       start_server_proc = Proc.new do
         MessageQueue.instance.start_listening
         Server.run
-        die_gracefully_on_signal
       end
       
       if EM.reactor_running?
@@ -70,18 +68,6 @@ module Alondra
       else
         Log.info "starting EM reactor"
         EM.run(start_server_proc)
-      end
-    end
-
-    def self.die_gracefully_on_signal
-      Signal.trap("INT")  do
-        Log.warn "INT signal trapped. Shutting down EM reactor"
-        EM.stop
-      end
-
-      Signal.trap("TERM") do
-        Log.warn "TERM signal trapped. Shutting down EM reactor"
-        EM.stop
       end
     end
   end
