@@ -18,7 +18,6 @@ require_relative 'alondra/changes_push'
 require_relative 'alondra/server'
 
 module Alondra
-
   ActiveRecord::Base.extend ChangesPush
   ActionController::Base.send :include, Pushing
 

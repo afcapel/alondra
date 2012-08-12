@@ -1,10 +1,11 @@
-# Provide a simple gemspec so you can easily use your
-# project in your rails apps through git.
+# -*- encoding: utf-8 -*-
+require File.expand_path('../lib/alondra/version', __FILE__)
+
 Gem::Specification.new do |s|
   s.name = "alondra"
   s.summary = "Add real time capabilities to your rails app"
   s.description = "Add real time capabilities to your rails app"
-  s.version = "0.0.4"
+  s.version = Alondra::VERSION
   s.authors = ['Alberto F. Capel', 'Ryan LeCompte']
 
   s.files         = `git ls-files`.split("\n")
