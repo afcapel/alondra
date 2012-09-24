@@ -161,10 +161,10 @@ In the shell execute the generator.
   $ rails g alondra install
 </pre>
 
-To run the Alondra server, just call the generated script
+To run the Alondra server, just call the provided executable in your project directory
 
 <pre>
-  $ script/alondra start
+  $ bundle exec alondra
 </pre>
 
 In development mode you can also run the Alondra server in its own thread.
