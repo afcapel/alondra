@@ -9,7 +9,7 @@ module Alondra
     end
 
     test "it allows to override default values" do
-      assert_equal 'localhost', Alondra.config.host
+      assert_equal '0.0.0.0', Alondra.config.host
       Alondra.config.host    = 'www.example.com'
       assert_equal 'www.example.com', Alondra.config.host
     end

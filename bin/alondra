@@ -13,13 +13,13 @@ parser = OptionParser.new do |opts|
     options[:host] = arg
   end
 
-  opts.on "-s", "--queue-socket", "Socket for IPC communication" do
+  opts.on "-s", "--queue-socket PATH", "Socket for IPC communication" do
     options[:quiet] = true
   end
 
   opts.on "-e", "--environment ENVIRONMENT",
   "The environment to run the Rack app on (default: development)" do |arg|
-    options[:environment] = arg
+    ENV['RACK_ENV'] ||= arg
   end
 end
 
@@ -32,9 +32,9 @@ end
 
 parser.parse(ARGV)
 
-ENV['RACK_ENV'] ||= options[:environment] || 'development'
+ENV['RACK_ENV'] ||= 'development'
 
-require 'config/environment'
+require './config/environment'
 require 'alondra'
 
 
