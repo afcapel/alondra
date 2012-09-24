@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    alondra (0.1.0)
+    alondra (0.1.1)
       daemons
       em-websocket
       em-zeromq (= 0.3.0)
