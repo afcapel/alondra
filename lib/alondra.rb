@@ -25,9 +25,9 @@ module Alondra
 
     # Setting default configuration values
     config.port         = Rails.env == 'test' ? 12346 : 12345
-    config.host         = 'localhost'
+    config.host         = '0.0.0.0'
     config.queue_socket = 'ipc:///tmp/alondra.ipc'
-    
+
     initializer "configure EM thread pool" do
       # If we have more threads than db connections we will exhaust the conn pool
       threadpool_size = ActiveRecord::Base.connection_pool.instance_variable_get :@size
@@ -41,13 +41,20 @@ module Alondra
 
     initializer "load listeners" do
       listeners_dir = File.join(Rails.root, 'app', 'listeners')
-      
+
       Log.info "Loading event listeners in #{listeners_dir}"
       Dir[File.join(listeners_dir, '*.rb')].each { |file| require_dependency file }
     end
-    
+
     config.after_initialize do
       PushController.send :include, Rails.application.routes.url_helpers
+    end
+
+    def self.start_with_options(options)
+      options.each do |k, v|
+        config.send "#{k}=", v
+      end
+      start_server_in_new_thread!
     end
 
     def self.start_server_in_new_thread!
@@ -61,9 +68,9 @@ module Alondra
         MessageQueue.instance.start_listening
         Server.run
       end
-      
+
       if EM.reactor_running?
-        EM.schedule(start_server_proc) 
+        EM.schedule(start_server_proc)
       else
         Log.info "starting EM reactor"
         EM.run(start_server_proc)

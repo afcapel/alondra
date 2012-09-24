@@ -1,0 +1,45 @@
+#!/usr/bin/env ruby
+
+options = {}
+
+parser = OptionParser.new do |opts|
+  opts.on "-p", "--port PORT", Integer,
+  "Define what port TCP port to bind to (default: 3000)" do |arg|
+    options[:port] = arg
+  end
+
+  opts.on "-a", "--address HOST",
+  "bind to HOST address (default: 0.0.0.0)" do |arg|
+    options[:host] = arg
+  end
+
+  opts.on "-s", "--queue-socket", "Socket for IPC communication" do
+    options[:quiet] = true
+  end
+
+  opts.on "-e", "--environment ENVIRONMENT",
+  "The environment to run the Rack app on (default: development)" do |arg|
+    options[:environment] = arg
+  end
+end
+
+parser.banner = "alondra <options>"
+
+parser.on_tail "-h", "--help", "Show help" do
+  puts parser
+  exit 1
+end
+
+parser.parse(ARGV)
+
+ENV['RACK_ENV'] ||= options[:environment] || 'development'
+
+require 'config/environment'
+require 'alondra'
+
+
+Alondra::Alondra.start_with_options(options)
+
+puts "Alondra server started at port #{Alondra::Alondra.config.port}"
+
+sleep
