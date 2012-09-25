@@ -17,8 +17,12 @@ class @AlondraClient
     @connect()
 
   subscribe: (channel) =>
-    if @socket.readyState ==  0 # Socket is connecting
-      @channels.push(channel)   # Schedule for later subscription
+    @channels.push(channel)
+
+    if @socket.readyState ==  0
+      # Socket is connecting
+      # Schedule for later subscription
+
       return
 
     subscription =
@@ -27,6 +31,19 @@ class @AlondraClient
 
     @socket.send $.toJSON(subscription)
     @
+
+  unsubscribe: (channel) =>
+    channelIndex = @channels.indexOf(channel)
+    @channels.splice(channelIndex, 1) if channelIndex >= 0
+
+    if @socket.readyState == 1
+      unsubscription =
+        command: 'unsubscribe'
+        channel: channel
+
+      @socket.send $.toJSON(unsubscription)
+
+    return this
 
   opened: () =>
     if @reconnectInterval
