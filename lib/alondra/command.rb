@@ -21,8 +21,8 @@ module Alondra
         channel.subscribe @connection
         fire_event :subscribed
       when :unsubscribe then
+        # :unsubscribed event will be fired in Channel#unsubscribe
         channel.unsubscribe @connection
-        fire_event :unsubscribed
       end
     end
 
