@@ -32,6 +32,7 @@ end
 
 parser.parse(ARGV)
 
+ENV['ALONDRA_SERVER'] ||= 'true'
 ENV['RACK_ENV'] ||= 'development'
 
 require './config/environment'
