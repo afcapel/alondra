@@ -13,10 +13,10 @@ module Alondra
         Log.warn 'Connections to message queue started twice'
         reset!
       end
-      
-      push_socket  
+
+      push_socket
       pull_socket
-      
+
       self
     end
 
@@ -49,27 +49,27 @@ module Alondra
     def receive(event)
       event_router.process(event)
     end
-    
+
     def push_socket
       @push_socket ||= begin
-        push_socket = context.socket(ZMQ::PUSH)  
+        push_socket = context.socket(ZMQ::PUSH)
         push_socket.connect(Alondra.config.queue_socket)
         push_socket
       end
     end
-    
+
     def pull_socket
       @pull_socket ||= begin
-        pull_socket = context.socket(ZMQ::PULL, self)  
+        pull_socket = context.socket(ZMQ::PULL, self)
         pull_socket.bind(Alondra.config.queue_socket)
         pull_socket
       end
     end
 
     def reset!
-      @push_socket.close()
-      @pull_socket.close()
-      
+      @push_socket.unbind
+      @pull_socket.unbind
+
       @context     = nil
       @push_socket = nil
       @pull_socket = nil

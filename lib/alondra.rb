@@ -76,6 +76,10 @@ module Alondra
         EM.run(start_server_proc)
       end
     end
+
+    def self.stop_server!
+      EM.stop
+    end
   end
 end
 
