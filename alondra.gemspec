@@ -19,5 +19,5 @@ Gem::Specification.new do |s|
   s.add_dependency('uuidtools')
   s.add_dependency('rails', '>= 3.1.0')
   s.add_dependency('em-websocket')
-  s.add_dependency('em-zeromq', '0.3.0')
+  s.add_dependency('em-zeromq', '>= 0.3.1')
 end
