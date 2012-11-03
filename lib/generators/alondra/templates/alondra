@@ -15,16 +15,12 @@ options = {
 Daemons.run_proc 'alondra', options do
 
   ENV["ALONDRA_SERVER"] = 'true'
-  
+
   require_relative File.join('..', 'config', 'environment')
-  
-  log_path = File.expand_path(File.join(File.dirname(__FILE__), '..', 'log', 'alondra.log'))
-  
-  Rails.logger =  ActiveSupport::BufferedLogger.new(log_path)
 
-  Log.info "Started alondra server on port #{Alondra::Alondra.config.port}... #{EM.reactor_running?}"
+  Rails.logger.info "Started alondra server on port #{Alondra::Alondra.config.port}... #{EM.reactor_running?}"
 
-  EM.reactor_thread.join
-  
-  Log.info 'Alondra server terminated'
+  Alondra::Alondra.start_server_in_new_thread!.join
+
+  Rails.logger.info 'Alondra server terminated'
 end
