@@ -18,8 +18,8 @@ parser = OptionParser.new do |opts|
   end
 
   opts.on "-e", "--environment ENVIRONMENT",
-  "The environment to run the Rack app on (default: development)" do |arg|
-    ENV['RACK_ENV'] ||= arg
+  "The environment to run the Rails app on (default: development)" do |arg|
+    ENV['RAILS_ENV'] ||= arg
   end
 end
 
@@ -33,7 +33,7 @@ end
 parser.parse(ARGV)
 
 ENV['ALONDRA_SERVER'] ||= 'true'
-ENV['RACK_ENV'] ||= 'development'
+ENV['RAILS_ENV'] ||= 'development'
 
 require './config/environment'
 require 'alondra'
