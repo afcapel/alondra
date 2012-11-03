@@ -4,7 +4,7 @@ PATH
     alondra (0.1.1)
       daemons
       em-websocket
-      em-zeromq (= 0.3.0)
+      em-zeromq (>= 0.3.1)
       rails (>= 3.1.0)
       uuidtools
 
@@ -61,7 +61,7 @@ GEM
     em-websocket (0.3.8)
       addressable (>= 2.1.1)
       eventmachine (>= 0.12.9)
-    em-zeromq (0.3.0)
+    em-zeromq (0.3.1)
       eventmachine (= 1.0.0.beta.4)
       ffi (>= 1.0.0)
       ffi-rzmq (= 0.9.3)
