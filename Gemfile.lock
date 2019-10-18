@@ -71,7 +71,7 @@ GEM
       multi_json (~> 1.0)
     factory_girl (4.0.0)
       activesupport (>= 3.0.0)
-    ffi (1.1.5)
+    ffi (1.11.1)
     ffi-rzmq (0.9.3)
       ffi
     hike (1.2.1)
